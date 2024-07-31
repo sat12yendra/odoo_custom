@@ -16,9 +16,6 @@
                     <field name="tin_no" />
                     <field name="whatsapp_no" />
                 </xpath>
-                <xpath expr="//field[@name='bank_account_id']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
                 <xpath expr="//page[@name='personal_information']" position="replace">
                     <page name="personal_information" string="Private Information" groups="hr.group_hr_user">
                         <group>
@@ -34,7 +31,8 @@
                                 </div>
                                 <field name="private_email" string="Email"/>
                                 <field name="private_phone" string="Phone"/>
-                                <field name="bank_account_id" context="{'default_partner_id': work_contact_id}" options="{'no_quick_create': True}" readonly="not id"/>
+                                <field name="bank_account_id" invisible="1"
+                                       context="{'default_partner_id': work_contact_id}" options="{'no_quick_create': True}" readonly="not id"/>
                                 <field name="lang" string="Language"/>
                                 <label for="km_home_work"/>
                                 <div class="o_row" name="div_km_home_work">
@@ -42,27 +40,6 @@
                                     <span>Km</span>
                                 </div>
                                 <field name="private_car_plate" />
-                            </group>
-                            <group string="Education">
-                                <field name="certificate"/>
-                                <field name="study_field"/>
-                                <field name="study_school"/>
-                                <separator name="has_work_permit" string="Work Permit"/>
-                                <field name="visa_no"/>
-                                <field name="permit_no"/>
-                                <field name="visa_expire"/>
-                                <field name="work_permit_expiration_date"/>
-                                <field name="work_permit_name" invisible="1"/>
-                                <field name="has_work_permit" widget="work_permit_upload" filename="work_permit_name"/>
-                            </group>
-                            <group string="Family Status">
-                                <field name="marital"/>
-                                <field name="spouse_complete_name" invisible="marital not in ['married', 'cohabitant']"/>
-                                <field name="spouse_birthdate" invisible="marital not in ['married', 'cohabitant']"/>
-                                <field name="children"/>
-                                <separator name="emergency" string="Emergency"/>
-                                <field name="emergency_contact"/>
-                                <field name="emergency_phone" class="o_force_ltr"/>
                                 <separator name="others" string="Others"/>
                                 <field name="pan_no" string="PAN Card No."
                                        filename="pan_no_file_name"/>
@@ -72,17 +49,65 @@
                                 <field name="swift_code" string="Swift Code"/>
                                 <field name="pan_no_file_name" invisible="1"/>
                                 <field name="aadhaar_no_file_name" invisible="1"/>
+                                <separator name="family_status" string="Family Status"/>
+                                <field name="marital"/>
+                                <field name="spouse_complete_name" invisible="marital not in ['married', 'cohabitant']"/>
+                                <field name="spouse_birthdate" invisible="marital not in ['married', 'cohabitant']"/>
+                                <field name="children"/>
+                                <separator name="emergency" string="Emergency"/>
+                                <field name="emergency_contact"/>
+                                <field name="emergency_phone" class="o_force_ltr"/>
                             </group>
-                            <group string="Citizenship">
+                            <group name="has_work_permit" string="Work Permit">
+                                <field name="visa_no"/>
+                                <field name="permit_no"/>
+                                <field name="visa_expire"/>
+                                <field name="business_visa_exp_date"/>
+                                <field name="special_pass_exp_date"/>
+                                <field name="work_permit_expiration_date"/>
+                                <field name="work_permit_name" invisible="1"/>
+                                <field name="has_work_permit" widget="work_permit_upload" filename="work_permit_name"/>
+                                <separator name="citizenship" string="Citizenship"/>
                                 <field name="country_id" options='{"no_open": True, "no_create": True}'/>
                                 <field name="identification_id"/>
                                 <field name="ssnid"/>
                                 <field name="passport_id"/>
+                                <field name="passport" filename="passport_file_name"/>
+                                <field name="passport_exp_date"/>
                                 <field name="gender"/>
                                 <field name="birthday"/>
                                 <field name="place_of_birth"/>
                                 <field name="country_of_birth"/>
+                                <field name="passport_file_name" invisible="1"/>
                             </group>
+                        </group>
+                        <group name="education_details" string="Education Details">
+                            <field name="education_detail_line_ids" string="">
+                                <tree>
+                                    <field name="certificate" />
+                                    <field name="study_field" />
+                                    <field name="study_school" />
+                                    <field name="subject" />
+                                    <field name="start_date" />
+                                    <field name="end_date" />
+                                    <field name="grade" />
+                                    <field name="percentage" />
+                                </tree>
+                                <form>
+                                    <group col="4">
+                                        <field name="certificate" />
+                                        <field name="study_field" />
+                                        <field name="study_school" />
+                                        <field name="subject" />
+                                        <field name="start_date" />
+                                        <field name="end_date" />
+                                        <field name="grade" />
+                                        <field name="percentage" />
+                                        <field name="degree" filename="degree_file_name"/>
+                                        <field name="degree_file_name" invisible="1"/>
+                                    </group>
+                                </form>
+                            </field>
                         </group>
                         <group name="bank_details" string="Bank Details">
                             <field name="bank_details_line_ids" string="">
@@ -96,6 +121,29 @@
                             </field>
                         </group>
                     </page>
+                </xpath>
+                <xpath expr="//page[@name='hr_settings']" position="inside">
+                    <group name="others" string="Others">
+                        <group>
+                            <field name="upcoming_leave_date" />
+                            <field name="last_leave_date" />
+                            <field name="package_salary" />
+                            <field name="remarks" />
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="resume_survey_line_view_form_inherited" model="ir.ui.view">
+            <field name="name">hr.resume.line.form.inherited</field>
+            <field name="model">hr.resume.line</field>
+            <field name="inherit_id" ref="hr_skills.resume_line_view_form"/>
+            <field eval="99" name="priority"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_end']" position="after">
+                    <field name="resume" filename="resume_file_name"/>
+                    <field name="resume_file_name" invisible="1"/>
                 </xpath>
             </field>
         </record>
