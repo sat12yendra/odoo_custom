@@ -1,0 +1,103 @@
+<odoo>
+    <data>
+        <record id="view_employee_form_inherit" model="ir.ui.view">
+            <field name="name">view.employee.form.inherit.hr</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='mobile_phone']" position="before">
+                    <field name="age" />
+                    <field name="gender" />
+                </xpath>
+                <xpath expr="//field[@name='work_email']" position="after">
+                    <field name="nssf_no" />
+                </xpath>
+                <xpath expr="//field[@name='coach_id']" position="after">
+                    <field name="tin_no" />
+                    <field name="whatsapp_no" />
+                </xpath>
+                <xpath expr="//field[@name='bank_account_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='personal_information']" position="replace">
+                    <page name="personal_information" string="Private Information" groups="hr.group_hr_user">
+                        <group>
+                            <group string="Private Contact">
+                                <label for="private_street" string="Private Address"/>
+                                <div class="o_address_format">
+                                    <field name="private_street" placeholder="Street..." class="o_address_street"/>
+                                    <field name="private_street2" placeholder="Street 2..." class="o_address_street"/>
+                                    <field name="private_city" placeholder="City" class="o_address_city"/>
+                                    <field name="private_state_id" class="o_address_state" placeholder="State" options="{'no_open': True, 'no_quick_create': True}" context="{'default_country_id': private_country_id}"/>
+                                    <field name="private_zip" placeholder="ZIP" class="o_address_zip"/>
+                                    <field name="private_country_id" placeholder="Country" class="o_address_country" options='{"no_open": True, "no_create": True}'/>
+                                </div>
+                                <field name="private_email" string="Email"/>
+                                <field name="private_phone" string="Phone"/>
+                                <field name="bank_account_id" context="{'default_partner_id': work_contact_id}" options="{'no_quick_create': True}" readonly="not id"/>
+                                <field name="lang" string="Language"/>
+                                <label for="km_home_work"/>
+                                <div class="o_row" name="div_km_home_work">
+                                    <field name="km_home_work" class="o_hr_narrow_field"/>
+                                    <span>Km</span>
+                                </div>
+                                <field name="private_car_plate" />
+                            </group>
+                            <group string="Education">
+                                <field name="certificate"/>
+                                <field name="study_field"/>
+                                <field name="study_school"/>
+                                <separator name="has_work_permit" string="Work Permit"/>
+                                <field name="visa_no"/>
+                                <field name="permit_no"/>
+                                <field name="visa_expire"/>
+                                <field name="work_permit_expiration_date"/>
+                                <field name="work_permit_name" invisible="1"/>
+                                <field name="has_work_permit" widget="work_permit_upload" filename="work_permit_name"/>
+                            </group>
+                            <group string="Family Status">
+                                <field name="marital"/>
+                                <field name="spouse_complete_name" invisible="marital not in ['married', 'cohabitant']"/>
+                                <field name="spouse_birthdate" invisible="marital not in ['married', 'cohabitant']"/>
+                                <field name="children"/>
+                                <separator name="emergency" string="Emergency"/>
+                                <field name="emergency_contact"/>
+                                <field name="emergency_phone" class="o_force_ltr"/>
+                                <separator name="others" string="Others"/>
+                                <field name="pan_no" string="PAN Card No."
+                                       filename="pan_no_file_name"/>
+                                <field name="aadhaar_no" string="Aadhaar Card No."
+                                       filename="aadhaar_no_file_name"/>
+                                <field name="alien_card" string="Alien Card"/>
+                                <field name="swift_code" string="Swift Code"/>
+                                <field name="pan_no_file_name" invisible="1"/>
+                                <field name="aadhaar_no_file_name" invisible="1"/>
+                            </group>
+                            <group string="Citizenship">
+                                <field name="country_id" options='{"no_open": True, "no_create": True}'/>
+                                <field name="identification_id"/>
+                                <field name="ssnid"/>
+                                <field name="passport_id"/>
+                                <field name="gender"/>
+                                <field name="birthday"/>
+                                <field name="place_of_birth"/>
+                                <field name="country_of_birth"/>
+                            </group>
+                        </group>
+                        <group name="bank_details" string="Bank Details">
+                            <field name="bank_details_line_ids" string="">
+                                <tree editable="bottom">
+                                    <field name="bank_id" string="Bank Name"/>
+                                    <field name="acc_number" string="Account No."/>
+                                    <field name="partner_id" />
+                                    <field name="ifsc_code" string="IFSC Code"/>
+                                    <field name="branch_name" />
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
