@@ -47,6 +47,7 @@
                                        filename="aadhaar_no_file_name"/>
                                 <field name="alien_card" string="Alien Card"/>
                                 <field name="swift_code" string="Swift Code"/>
+                                <field name="medical_certificate"/>
                                 <field name="pan_no_file_name" invisible="1"/>
                                 <field name="aadhaar_no_file_name" invisible="1"/>
                                 <separator name="family_status" string="Family Status"/>
@@ -127,9 +128,18 @@
                         <group>
                             <field name="upcoming_leave_date" />
                             <field name="last_leave_date" />
-                            <field name="package_salary" />
+<!--                            <field name="package_salary" />-->
                             <field name="remarks" />
                         </group>
+                    </group>
+                    <group name="compensation_details" string="Compensation Details">
+                        <field name="compensation_detail_line_ids" string="">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="amount"/>
+                                <field name="currency_id" />
+                            </tree>
+                        </field>
                     </group>
                 </xpath>
             </field>

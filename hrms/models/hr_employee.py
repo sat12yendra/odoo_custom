@@ -21,6 +21,7 @@ class HrEmployee(models.Model):
     aadhaar_no_file_name = fields.Char()
     alien_card = fields.Char(string="Alien Card")
     swift_code = fields.Char(string="Swift Code")
+    medical_certificate = fields.Binary(string="Medical Certificate")
 
     business_visa_exp_date = fields.Date(string="Business Visa Exp. Date")
     special_pass_exp_date = fields.Date(string="Special Pass Exp. Date")
@@ -31,7 +32,7 @@ class HrEmployee(models.Model):
 
     upcoming_leave_date = fields.Date(string="Upcoming Leave Date")
     last_leave_date = fields.Date(string="Last Leave Date")
-    package_salary = fields.Integer("Package (Salary)")
+    # package_salary = fields.Integer("Package (Salary)")
     remarks = fields.Text("Remarks")
 
     offer_letter = fields.Binary("Offer Letter")
@@ -43,6 +44,8 @@ class HrEmployee(models.Model):
                                             string="Bank Details Lines")
     education_detail_line_ids = fields.One2many('hr.education.details', 'employee_id',
                                                 string="Education Details Lines")
+    compensation_detail_line_ids = fields.One2many('hr.compensation.details', 'employee_id',
+                                                   string="Compensation Details Lines")
 
 
 class ResPartnerBank(models.Model):
@@ -82,3 +85,13 @@ class EmployeeEducationDetails(models.Model):
     degree_file_name = fields.Char()
     grade = fields.Char(string="Grade")
     percentage = fields.Float(string="Percentage")
+
+
+class CompensationDetails(models.Model):
+    _name = 'hr.compensation.details'
+    _description = "Employee compensation details"
+
+    employee_id = fields.Many2one('hr.employee', string="Employee")
+    name = fields.Char(string="Component")
+    amount = fields.Float(string="Amount")
+    currency_id = fields.Many2one('res.currency', string="Currency")
