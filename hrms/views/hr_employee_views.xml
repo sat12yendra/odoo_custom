@@ -48,6 +48,7 @@
                                 <field name="alien_card" string="Alien Card"/>
                                 <field name="swift_code" string="Swift Code"/>
                                 <field name="medical_certificate"/>
+                                <field name="pcc_certificate"/>
                                 <field name="pan_no_file_name" invisible="1"/>
                                 <field name="aadhaar_no_file_name" invisible="1"/>
                                 <separator name="family_status" string="Family Status"/>
@@ -130,6 +131,10 @@
                             <field name="last_leave_date" />
 <!--                            <field name="package_salary" />-->
                             <field name="remarks" />
+                        </group>
+                        <group>
+                            <field name="appraisal_last_date" />
+                            <field name="appraisal_last_amount" />
                         </group>
                     </group>
                     <group name="compensation_details" string="Compensation Details">

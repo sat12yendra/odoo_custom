@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="email_template_visa_reminder" model="mail.template">
+            <field name="name">Visa Expiration Reminder</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="subject">Your Visa Expires in ${ctx['days_left']} Days</field>
+            <field name="email_to">${object.work_email}</field>
+            <field name="body_html" type="html">
+                <p>The visa of ${object.name} expires at ${object.visa_expiration_date}.</p>
+                <p>Your visa is set to expire on ${object.visa_expiration_date}.</p>
+                <p>The ${ctx['days_left']} days left to renew it.</p>
+                <p>Thank you</p>
+            </field>
+        </record>
+
+        <record id="email_template_passport_reminder" model="mail.template">
+            <field name="name">Passport Expiration Reminder</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="subject">The passport Expires in ${ctx['days_left']} Days</field>
+            <field name="email_to">${object.work_email}</field>
+            <field name="body_html" type="html">
+                <p>The visa of ${object.name} expires at ${object.visa_expiration_date}.</p>
+                <p>Your visa is set to expire on ${object.visa_expiration_date}.</p>
+                <p>The ${ctx['days_left']} days left to renew it.</p>
+                <p>Thank you</p>
+            </field>
+        </record>
+    </data>
+</odoo>

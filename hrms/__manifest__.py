@@ -19,6 +19,8 @@
     'data': [
         'security/ir.model.access.csv',
         'views/hr_employee_views.xml',
+        'data/cron.xml',
+        'data/email_template.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

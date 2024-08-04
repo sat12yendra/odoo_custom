@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields
+from odoo import models, fields, api
+from datetime import timedelta
 
 
 class HrEmployee(models.Model):
@@ -22,6 +23,7 @@ class HrEmployee(models.Model):
     alien_card = fields.Char(string="Alien Card")
     swift_code = fields.Char(string="Swift Code")
     medical_certificate = fields.Binary(string="Medical Certificate")
+    pcc_certificate = fields.Binary(string="PCC Certificate")
 
     business_visa_exp_date = fields.Date(string="Business Visa Exp. Date")
     special_pass_exp_date = fields.Date(string="Special Pass Exp. Date")
@@ -34,6 +36,8 @@ class HrEmployee(models.Model):
     last_leave_date = fields.Date(string="Last Leave Date")
     # package_salary = fields.Integer("Package (Salary)")
     remarks = fields.Text("Remarks")
+    appraisal_last_date = fields.Date(string="Appraisal last Date")
+    appraisal_last_amount = fields.Float(string="Appraisal Last Amount")
 
     offer_letter = fields.Binary("Offer Letter")
     offer_letter_file_name = fields.Char()
@@ -46,6 +50,42 @@ class HrEmployee(models.Model):
                                                 string="Education Details Lines")
     compensation_detail_line_ids = fields.One2many('hr.compensation.details', 'employee_id',
                                                    string="Compensation Details Lines")
+
+    @api.model
+    def _cron_send_visa_expiration_reminders(self):
+        today = fields.Date.today()
+        thirty_days_later = today + timedelta(days=30)
+
+        # Find employees with visa expiring within the next 30 days
+        employees = self.search([
+            ('business_visa_exp_date', '>=', today),
+            ('business_visa_exp_date', '<=', thirty_days_later)
+        ])
+
+        for employee in employees:
+            days_left = (employee.business_visa_exp_date - today).days
+            template_id = self.env.ref('hrms.email_template_visa_reminder')
+            if template_id:
+                # Use with_context to pass additional variables to the email template
+                template_id.with_context(days_left=days_left).send_mail(employee.id, force_send=True)
+
+    @api.model
+    def _cron_send_passport_expiration_reminders(self):
+        today = fields.Date.today()
+        thirty_days_later = today + timedelta(days=30)
+
+        # Find employees with passport expiring within the next 30 days
+        employees = self.search([
+            ('passport_exp_date', '>=', today),
+            ('passport_exp_date', '<=', thirty_days_later)
+        ])
+
+        for employee in employees:
+            days_left = (employee.passport_exp_date - today).days
+            template_id = self.env.ref('hrms.email_template_passport_reminder')
+            if template_id:
+                # Use with_context to pass additional variables to the email template
+                template_id.with_context(days_left=days_left).send_mail(employee.id, force_send=True)
 
 
 class ResPartnerBank(models.Model):
