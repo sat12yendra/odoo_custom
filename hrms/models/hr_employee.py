@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
-from datetime import timedelta
+from datetime import timedelta, date
+from odoo.exceptions import ValidationError
 
 
 class HrEmployee(models.Model):
@@ -32,7 +33,8 @@ class HrEmployee(models.Model):
     passport_file_name = fields.Char()
     passport_exp_date = fields.Date(string="Passport Expire Date")
 
-    upcoming_leave_date = fields.Date(string="Upcoming Leave Date")
+    from_upcoming_leave_date = fields.Date(string="From Upcoming Leave Date")
+    to_upcoming_leave_date = fields.Date(string="To Upcoming Leave Date")
     last_leave_date = fields.Date(string="Last Leave Date")
     # package_salary = fields.Integer("Package (Salary)")
     remarks = fields.Text("Remarks")
@@ -44,12 +46,126 @@ class HrEmployee(models.Model):
     experience_letter = fields.Binary("Experience Letter")
     experience_letter_file_name = fields.Char()
 
+    # Define the total fields
+    total_in_hand_allowance = fields.Monetary(string='Total In Hand Allowance', compute='_compute_total_allowances', store=True)
+    total_other_allowance = fields.Monetary(string='Total Other Allowance', compute='_compute_total_allowances', store=True)
+    total_ctc = fields.Monetary(string='Total CTC', compute='_compute_total_ctc', store=True)
+
     bank_details_line_ids = fields.One2many('res.partner.bank', 'employee_id',
                                             string="Bank Details Lines")
     education_detail_line_ids = fields.One2many('hr.education.details', 'employee_id',
                                                 string="Education Details Lines")
     compensation_detail_line_ids = fields.One2many('hr.compensation.details', 'employee_id',
                                                    string="Compensation Details Lines")
+    salary_detail_line_ids = fields.One2many('hr.salary.details', 'employee_id',
+                                             string="Salary Details Lines")
+
+    @api.constrains('from_upcoming_leave_date', 'to_upcoming_leave_date')
+    def _check_leave_dates(self):
+        for record in self:
+            if record.from_upcoming_leave_date and record.to_upcoming_leave_date:
+                # Ensure the 'from' date is before the 'to' date
+                if record.from_upcoming_leave_date > record.to_upcoming_leave_date:
+                    raise ValidationError(
+                        "The 'From Upcoming Leave Date' must be earlier than the 'To Upcoming Leave Date'.")
+
+                # Ensure both dates are in the future
+                if record.from_upcoming_leave_date < date.today() or record.to_upcoming_leave_date < date.today():
+                    raise ValidationError(
+                        "Both 'From Upcoming Leave Date' and 'To Upcoming Leave Date' must be in the future.")
+
+    @api.depends('salary_detail_line_ids.amount', 'salary_detail_line_ids.salary_type')
+    def _compute_total_allowances(self):
+        for record in self:
+            total_in_hand = 0.0
+            total_other = 0.0
+            for line in record.salary_detail_line_ids:
+                if line.salary_type == 'in_hand':
+                    total_in_hand += line.amount
+                elif line.salary_type == 'others':
+                    total_other += line.amount
+            record.total_in_hand_allowance = total_in_hand
+            record.total_other_allowance = total_other
+
+    @api.depends('total_in_hand_allowance', 'total_other_allowance')
+    def _compute_total_ctc(self):
+        for record in self:
+            record.total_ctc = record.total_in_hand_allowance + record.total_other_allowance
+
+    @api.model
+    def default_get(self, fields):
+        res = super(HrEmployee, self).default_get(fields)
+
+        # Load salary details from the salary.master
+        salary_master_records = self.env['salary.master'].search([])
+        salary_details = []
+
+        for record in salary_master_records:
+            salary_details.append((0, 0, {
+                'name': record.name,
+                'salary_type': record.salary_type,
+                'amount': 0.0,
+                'currency_id': res.get('currency_id'),
+                'remarks': '',
+            }))
+
+        res['salary_detail_line_ids'] = salary_details
+        return res
+
+    def write(self, vals):
+        result = super(HrEmployee, self).write(vals)
+
+        for employee in self:
+            if not employee.salary_detail_line_ids:
+                salary_master_records = self.env['salary.master'].search([])
+                salary_details = []
+
+                for record in salary_master_records:
+                    salary_details.append((0, 0, {
+                        'employee_id': employee.id,
+                        'name': record.name,
+                        'salary_type': record.salary_type,
+                        'amount': 0.0,
+                        'currency_id': employee.currency_id.id,
+                        'remarks': '',
+                    }))
+
+                if salary_details:
+                    employee.write({'salary_detail_line_ids': salary_details})
+
+        return result
+
+    def action_populate_salary_details(self):
+        # Iterate through all employees in the recordset
+        for employee in self:
+            # Only populate if salary_detail_line_ids is empty
+            if not employee.salary_detail_line_ids:
+                salary_master_records = self.env['salary.master'].search([])
+                salary_details = []
+
+                for record in salary_master_records:
+                    salary_details.append((0, 0, {
+                        'employee_id': employee.id,
+                        'name': record.name,
+                        'salary_type': record.salary_type,
+                        'amount': 0.0,
+                        'currency_id': employee.currency_id.id,
+                        'remarks': '',
+                    }))
+
+                if salary_details:
+                    employee.write({'salary_detail_line_ids': salary_details})
+
+        # Optionally, return a message to notify the user
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Success',
+                'message': 'Salary details populated for all employees with blank salary details.',
+                'sticky': False,
+            },
+        }
 
     @api.model
     def _cron_send_visa_expiration_reminders(self):
@@ -135,3 +251,16 @@ class CompensationDetails(models.Model):
     name = fields.Char(string="Component")
     amount = fields.Float(string="Amount")
     currency_id = fields.Many2one('res.currency', string="Currency")
+
+
+class HrSalaryDetails(models.Model):
+    _name = 'hr.salary.details'
+    _description = "Employee salary compensation details"
+
+    employee_id = fields.Many2one('hr.employee', string="Employee")
+    name = fields.Char(string="Component")
+    salary_type = fields.Selection([('in_hand', 'In-hand'), ('others', 'Others')],
+                                   string="Salary Type")
+    amount = fields.Float(string="Amount")
+    currency_id = fields.Many2one('res.currency', string="Currency")
+    remarks = fields.Text("Remarks")

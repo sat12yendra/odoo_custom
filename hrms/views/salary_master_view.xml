@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_salary_master_tree_view" model="ir.ui.view">
+            <field name="name">hr.salary.master.view.tree</field>
+            <field name="model">salary.master</field>
+            <field name="arch" type="xml">
+                <tree string="Employee Salary" editable="bottom">
+                    <field name="name" />
+                    <field name="salary_type" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_salary_master_action" model="ir.actions.act_window">
+            <field name="name">Employee Salary</field>
+            <field name="res_model">salary.master</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new salary master
+                </p>
+            </field>
+        </record>
+
+        <menuitem
+            id="menu_view_salary_master"
+            name="Employee Salary"
+            action="hr_salary_master_action"
+            parent="hr.menu_config_recruitment"
+            sequence="99"/>
+    </data>
+</odoo>

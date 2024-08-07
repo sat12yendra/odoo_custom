@@ -5,6 +5,10 @@
             <field name="model">hr.employee</field>
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="action_populate_salary_details" type="object" string="Populate Salary Details" class="oe_highlight"
+                            groups="base.group_no_one" />
+                </xpath>
                 <xpath expr="//field[@name='mobile_phone']" position="before">
                     <field name="age" />
                     <field name="gender" />
@@ -15,6 +19,7 @@
                 <xpath expr="//field[@name='coach_id']" position="after">
                     <field name="tin_no" />
                     <field name="whatsapp_no" />
+                    <field name="currency_id" />
                 </xpath>
                 <xpath expr="//page[@name='personal_information']" position="replace">
                     <page name="personal_information" string="Private Information" groups="hr.group_hr_user">
@@ -127,14 +132,16 @@
                 <xpath expr="//page[@name='hr_settings']" position="inside">
                     <group name="others" string="Others">
                         <group>
-                            <field name="upcoming_leave_date" />
                             <field name="last_leave_date" />
-<!--                            <field name="package_salary" />-->
                             <field name="remarks" />
                         </group>
                         <group>
                             <field name="appraisal_last_date" />
                             <field name="appraisal_last_amount" />
+                        </group>
+                        <group string="Upcoming Leave Date">
+                            <field name="from_upcoming_leave_date" />
+                            <field name="to_upcoming_leave_date" />
                         </group>
                     </group>
                     <group name="compensation_details" string="Compensation Details">
@@ -146,6 +153,29 @@
                             </tree>
                         </field>
                     </group>
+                </xpath>
+                <xpath expr="//page[@name='hr_settings']" position="after">
+                    <page name="salary_detail" string="Salary Details">
+                        <field name="salary_detail_line_ids" string="">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="salary_type"/>
+                                <field name="amount"/>
+                                <field name="currency_id" />
+                                <field name="remarks" />
+                            </tree>
+                        </field>
+                        <group name="note_group" col="6" class="mt-2 mt-md-0">
+                            <group class="oe_subtotal_footer" colspan="2" name="salary_total">
+                                <field name="total_in_hand_allowance" colspan="2" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <field name="total_other_allowance" colspan="2" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                            <div class="clearfix"/>
+                            <group class="oe_subtotal_footer" colspan="2" name="salary_total">
+                                <field name="total_ctc" colspan="2" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                        </group>
+                    </page>
                 </xpath>
             </field>
         </record>

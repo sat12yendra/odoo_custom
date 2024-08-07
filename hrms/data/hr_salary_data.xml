@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--    Data file for hr Salary-->
+    <data noupdate="1">
+        <record id="hr_salary_data1" model="salary.master">
+            <field name="name">Basic Salary</field>
+            <field name="salary_type">in_hand</field>
+        </record>
+        <record id="hr_salary_data2" model="salary.master">
+            <field name="name">Meal</field>
+            <field name="salary_type">in_hand</field>
+        </record>
+        <record id="hr_salary_data3" model="salary.master">
+            <field name="name">Accommodation</field>
+            <field name="salary_type">in_hand</field>
+        </record>
+        <record id="hr_salary_data4" model="salary.master">
+            <field name="name">Vehicle</field>
+            <field name="salary_type">in_hand</field>
+        </record>
+        <record id="hr_salary_data5" model="salary.master">
+            <field name="name">Fuel / Transport allowance</field>
+            <field name="salary_type">in_hand</field>
+        </record>
+        <record id="hr_salary_data6" model="salary.master">
+            <field name="name">Medical</field>
+            <field name="salary_type">in_hand</field>
+        </record>
+        <record id="hr_salary_data7" model="salary.master">
+            <field name="name">Bounce</field>
+            <field name="salary_type">in_hand</field>
+        </record>
+        <record id="hr_salary_data8" model="salary.master">
+            <field name="name">NSSF E1</field>
+            <field name="salary_type">in_hand</field>
+        </record>
+        <record id="hr_salary_data9" model="salary.master">
+            <field name="name">NSSF E2</field>
+            <field name="salary_type">in_hand</field>
+        </record>
+
+        <record id="hr_salary_data10" model="salary.master">
+            <field name="name">Other allowance 1</field>
+            <field name="salary_type">others</field>
+        </record>
+        <record id="hr_salary_data11" model="salary.master">
+            <field name="name">Other allowance 2</field>
+            <field name="salary_type">others</field>
+        </record>
+        <record id="hr_salary_data13" model="salary.master">
+            <field name="name">Other allowance 3</field>
+            <field name="salary_type">others</field>
+        </record>
+        <record id="hr_salary_data14" model="salary.master">
+            <field name="name">VISA</field>
+            <field name="salary_type">others</field>
+        </record>
+        <record id="hr_salary_data15" model="salary.master">
+            <field name="name">Ticket</field>
+            <field name="salary_type">others</field>
+        </record>
+        <record id="hr_salary_data16" model="salary.master">
+            <field name="name">SDL</field>
+            <field name="salary_type">others</field>
+        </record>
+        <record id="hr_salary_data17" model="salary.master">
+            <field name="name">WCF</field>
+            <field name="salary_type">others</field>
+        </record>
+        <record id="hr_salary_data18" model="salary.master">
+            <field name="name">PAYE</field>
+            <field name="salary_type">others</field>
+        </record>
+        <record id="hr_salary_data19" model="salary.master">
+            <field name="name">HESLB</field>
+            <field name="salary_type">others</field>
+        </record>
+    </data>
+</odoo>
