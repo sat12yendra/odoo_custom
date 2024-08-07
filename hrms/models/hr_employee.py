@@ -60,19 +60,81 @@ class HrEmployee(models.Model):
     salary_detail_line_ids = fields.One2many('hr.salary.details', 'employee_id',
                                              string="Salary Details Lines")
 
-    @api.constrains('from_upcoming_leave_date', 'to_upcoming_leave_date')
-    def _check_leave_dates(self):
-        for record in self:
-            if record.from_upcoming_leave_date and record.to_upcoming_leave_date:
-                # Ensure the 'from' date is before the 'to' date
-                if record.from_upcoming_leave_date > record.to_upcoming_leave_date:
-                    raise ValidationError(
-                        "The 'From Upcoming Leave Date' must be earlier than the 'To Upcoming Leave Date'.")
+    @api.onchange('has_work_permit')
+    def _onchange_has_work_permit(self):
+        return self._check_file_size('has_work_permit', 'Work Permit')
 
-                # Ensure both dates are in the future
-                if record.from_upcoming_leave_date < date.today() or record.to_upcoming_leave_date < date.today():
-                    raise ValidationError(
-                        "Both 'From Upcoming Leave Date' and 'To Upcoming Leave Date' must be in the future.")
+    @api.onchange('pan_no')
+    def _onchange_pan_no(self):
+        return self._check_file_size('pan_no', 'PAN Card No.')
+
+    @api.onchange('aadhaar_no')
+    def _onchange_aadhaar_no(self):
+        return self._check_file_size('aadhaar_no', 'Aadhaar Card No.')
+
+    def _onchange_medical_certificate(self):
+        return self._check_file_size('medical_certificate', 'Medical Certificate')
+
+    @api.onchange('pcc_certificate')
+    def _onchange_pcc_certificate(self):
+        return self._check_file_size('uploaded_file_3', 'File 3')
+
+    @api.onchange('passport')
+    def _onchange_passport(self):
+        return self._check_file_size('passport', 'Passport')
+
+    @api.onchange('offer_letter')
+    def _onchange_offer_letter(self):
+        return self._check_file_size('offer_letter', 'Offer Letter')
+
+    @api.onchange('experience_letter')
+    def _onchange_experience_letter(self):
+        return self._check_file_size('experience_letter', 'Experience Letter')
+
+    def _check_file_size(self, field_name, field_label):
+        file_content = getattr(self, field_name)
+        if file_content:
+            file_size = len(file_content)
+            if file_size > 1024 * 1024:
+                setattr(self, field_name, False)
+                return {
+                    'warning': {
+                        'title': "File Size Exceeded",
+                        'message': f"File size cannot exceed 1024 KB (1 MB)."
+                                   f" Please upload a smaller file for {field_label}.",
+                    }
+                }
+
+    @api.onchange('from_upcoming_leave_date', 'to_upcoming_leave_date')
+    def _onchange_leave_dates(self):
+        if self.from_upcoming_leave_date or self.to_upcoming_leave_date:
+            if self.from_upcoming_leave_date and self.to_upcoming_leave_date:
+                # Ensure the 'from' date is before the 'to' date
+                if self.from_upcoming_leave_date > self.to_upcoming_leave_date:
+                    return {
+                        'warning': {
+                            'title': "Invalid Date Range",
+                            'message': "The 'From Upcoming Leave Date' must be earlier"
+                                       " than the 'To Upcoming Leave Date'.",
+                        }
+                    }
+
+            # Ensure both dates are in the future
+            today = date.today()
+            if self.from_upcoming_leave_date and self.from_upcoming_leave_date < today:
+                return {
+                    'warning': {
+                        'title': "Invalid Date",
+                        'message': "The 'From Upcoming Leave Date' must be in the future.",
+                    }
+                }
+            if self.to_upcoming_leave_date and self.to_upcoming_leave_date < today:
+                return {
+                    'warning': {
+                        'title': "Invalid Date",
+                        'message': "The 'To Upcoming Leave Date' must be in the future.",
+                    }
+                }
 
     @api.depends('salary_detail_line_ids.amount', 'salary_detail_line_ids.salary_type')
     def _compute_total_allowances(self):
@@ -219,6 +281,24 @@ class ResumeLine(models.Model):
     resume = fields.Binary("Resume")
     resume_file_name = fields.Char()
 
+    @api.onchange('resume')
+    def _onchange_resume(self):
+        return self._check_file_size('resume', 'Resume')
+
+    def _check_file_size(self, field_name, field_label):
+        file_content = getattr(self, field_name)
+        if file_content:
+            file_size = len(file_content)
+            if file_size > 1024 * 1024:
+                setattr(self, field_name, False)
+                return {
+                    'warning': {
+                        'title': "File Size Exceeded",
+                        'message': f"File size cannot exceed 1024 KB (1 MB)."
+                                   f" Please upload a smaller file for {field_label}.",
+                    }
+                }
+
 
 class EmployeeEducationDetails(models.Model):
     _name = 'hr.education.details'
@@ -241,6 +321,24 @@ class EmployeeEducationDetails(models.Model):
     degree_file_name = fields.Char()
     grade = fields.Char(string="Grade")
     percentage = fields.Float(string="Percentage")
+
+    @api.onchange('degree')
+    def _onchange_degree(self):
+        return self._check_file_size('degree', 'Degree')
+
+    def _check_file_size(self, field_name, field_label):
+        file_content = getattr(self, field_name)
+        if file_content:
+            file_size = len(file_content)
+            if file_size > 1024 * 1024:
+                setattr(self, field_name, False)
+                return {
+                    'warning': {
+                        'title': "File Size Exceeded",
+                        'message': f"File size cannot exceed 1024 KB (1 MB)."
+                                   f" Please upload a smaller file for {field_label}.",
+                    }
+                }
 
 
 class CompensationDetails(models.Model):
