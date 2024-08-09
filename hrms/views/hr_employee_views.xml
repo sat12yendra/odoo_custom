@@ -5,16 +5,18 @@
             <field name="model">hr.employee</field>
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//header" position="inside">
-                    <button name="action_populate_salary_details" type="object" string="Populate Salary Details" class="oe_highlight"
-                            groups="base.group_no_one" />
-                </xpath>
                 <xpath expr="//field[@name='mobile_phone']" position="before">
                     <field name="age" />
                     <field name="gender" />
+                    <field name="community" />
                 </xpath>
                 <xpath expr="//field[@name='work_email']" position="after">
                     <field name="nssf_no" />
+                </xpath>
+                <xpath expr="//page[@name='skills_resume']" position="inside">
+                    <group string="Job Description">
+                        <field name="job_description" string=""/>
+                    </group>
                 </xpath>
                 <xpath expr="//field[@name='coach_id']" position="after">
                     <field name="tin_no" />
@@ -81,7 +83,6 @@
                                 <field name="passport_id"/>
                                 <field name="passport" filename="passport_file_name"/>
                                 <field name="passport_exp_date"/>
-                                <field name="gender"/>
                                 <field name="birthday"/>
                                 <field name="place_of_birth"/>
                                 <field name="country_of_birth"/>
@@ -132,16 +133,21 @@
                 <xpath expr="//page[@name='hr_settings']" position="inside">
                     <group name="others" string="Others">
                         <group>
-                            <field name="last_leave_date" />
+                            <field name="permit_position" />
                             <field name="remarks" />
                         </group>
                         <group>
                             <field name="appraisal_last_date" />
                             <field name="appraisal_last_amount" />
                         </group>
-                        <group string="Upcoming Leave Date">
-                            <field name="from_upcoming_leave_date" />
-                            <field name="to_upcoming_leave_date" />
+                        <group>
+                            <field name="offer_letter"
+                                       filename="offer_letter_file_name"/>
+                            <field name="experience_letter" filename="experience_letter_file_name"/>
+                            <field name="government_contract_file" filename="government_contract_file_name"/>
+                            <field name="experience_letter_file_name" invisible="1"/>
+                            <field name="government_contract_file_name" invisible="1"/>
+                            <field name="offer_letter_file_name" invisible="1"/>
                         </group>
                     </group>
                     <group name="compensation_details" string="Compensation Details">
@@ -155,17 +161,44 @@
                     </group>
                 </xpath>
                 <xpath expr="//page[@name='hr_settings']" position="after">
+                    <page name="leave_management" string="Leave Management">
+                        <group name="leave_details">
+                            <group string="Current Leave Date">
+                                <field name="from_current_leave_date" />
+                                <field name="to_current_leave_date" />
+                                <field name="total_current_days" />
+                            </group>
+                            <group string="Last Leave Date">
+                                <field name="from_last_leave_date" />
+                                <field name="to_last_leave_date" />
+                                <field name="total_last_days" />
+                            </group>
+                            <group string="Upcoming Leave Date">
+                                <field name="from_upcoming_leave_date" />
+                                <field name="to_upcoming_leave_date" />
+                                <field name="total_upcoming_days" />
+                            </group>
+                        </group>
+                    </page>
                     <page name="salary_detail" string="Salary Details">
+                        <button name="action_populate_salary_details" type="object"
+                                string="Populate Salary Details" class="oe_highlight" />
                         <field name="salary_detail_line_ids" string="">
                             <tree editable="bottom">
-                                <field name="name"/>
+                                <field name="component_id" options='{"no_open": True, "no_create": True}'/>
                                 <field name="salary_type"/>
                                 <field name="amount"/>
-                                <field name="currency_id" />
+                                <field name="currency_id" options='{"no_open": True, "no_create": True}'/>
                                 <field name="remarks" />
                             </tree>
                         </field>
                         <group name="note_group" col="6" class="mt-2 mt-md-0">
+                            <group colspan="4">
+                                <field  colspan="2" name="salary_hr_note" nolabel="1" placeholder="Hr Note..."/>
+                            </group>
+                            <group colspan="4">
+                                <field  colspan="2" name="salary_admin_note" nolabel="1" placeholder="Admin Note..."/>
+                            </group>
                             <group class="oe_subtotal_footer" colspan="2" name="salary_total">
                                 <field name="total_in_hand_allowance" colspan="2" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                 <field name="total_other_allowance" colspan="2" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>

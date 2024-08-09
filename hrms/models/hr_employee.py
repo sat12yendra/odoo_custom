@@ -9,11 +9,25 @@ class HrEmployee(models.Model):
     _inherit = 'hr.employee'
     _description = 'Hr Employee Inherit'
 
+    @api.depends('from_current_leave_date', 'to_current_leave_date',
+                 'from_last_leave_date', 'to_last_leave_date',
+                 'from_upcoming_leave_date', 'to_upcoming_leave_date')
+    def _compute_days(self):
+        for record in self:
+            # Calculate current days
+            record.total_current_days = self._calculate_days(record.from_current_leave_date, record.to_current_leave_date)
+            # Calculate last days
+            record.total_last_days = self._calculate_days(record.from_last_leave_date, record.to_last_leave_date)
+            # Calculate upcoming days
+            record.total_upcoming_days = self._calculate_days(record.from_upcoming_leave_date, record.to_upcoming_leave_date)
+
+    def _calculate_days(self, start_date, end_date):
+        if start_date and end_date:
+            delta = fields.Date.from_string(end_date) - fields.Date.from_string(start_date)
+            return delta.days + 1  # Include both start and end dates
+        return 0
+
     age = fields.Integer("Age")
-    gender = fields.Selection([
-        ('male', 'Male'),
-        ('female', 'Female'),
-        ('other', 'Other')])
     nssf_no = fields.Char("NSSF No.")
     tin_no = fields.Char("Tin No.")
     whatsapp_no = fields.Char("WhatsApp No.")
@@ -33,18 +47,35 @@ class HrEmployee(models.Model):
     passport_file_name = fields.Char()
     passport_exp_date = fields.Date(string="Passport Expire Date")
 
+    from_current_leave_date = fields.Date(string="From Current Leave Date")
+    to_current_leave_date = fields.Date(string="To Current Leave Date")
+    total_current_days = fields.Integer("Total Current Days", compute="_compute_days", store=True)
+
+    from_last_leave_date = fields.Date(string="From Last Leave Date")
+    to_last_leave_date = fields.Date(string="To Last Leave Date")
+    total_last_days = fields.Integer("Total Last Days", compute="_compute_days", store=True)
+
     from_upcoming_leave_date = fields.Date(string="From Upcoming Leave Date")
     to_upcoming_leave_date = fields.Date(string="To Upcoming Leave Date")
-    last_leave_date = fields.Date(string="Last Leave Date")
-    # package_salary = fields.Integer("Package (Salary)")
+    total_upcoming_days = fields.Integer("Total Upcoming Days", compute="_compute_days", store=True)
+
     remarks = fields.Text("Remarks")
     appraisal_last_date = fields.Date(string="Appraisal last Date")
     appraisal_last_amount = fields.Float(string="Appraisal Last Amount")
 
     offer_letter = fields.Binary("Offer Letter")
     offer_letter_file_name = fields.Char()
+    government_contract_file = fields.Binary("Government Contract File")
+    government_contract_file_name = fields.Char()
     experience_letter = fields.Binary("Experience Letter")
     experience_letter_file_name = fields.Char()
+
+    permit_position = fields.Char("Permit Position")
+    community = fields.Selection([('HINDU', 'HINDU'), ('MUSLIM', 'MUSLIM'), ('BOHRA', 'BOHRA'),
+                                  ('SIKH', 'SIKH'), ('CHRISTIAN', 'CHRISTIAN'), ('Other', 'Other')], string="Community")
+    job_description = fields.Text("Job Description")
+    salary_hr_note = fields.Text("Hr Note")
+    salary_admin_note = fields.Text("Admin Note")
 
     # Define the total fields
     total_in_hand_allowance = fields.Monetary(string='Total In Hand Allowance', compute='_compute_total_allowances', store=True)
@@ -87,6 +118,10 @@ class HrEmployee(models.Model):
     def _onchange_offer_letter(self):
         return self._check_file_size('offer_letter', 'Offer Letter')
 
+    @api.onchange('government_contract_file')
+    def _onchange_government_contract_file(self):
+        return self._check_file_size('government_contract_file', 'Government Contract File')
+
     @api.onchange('experience_letter')
     def _onchange_experience_letter(self):
         return self._check_file_size('experience_letter', 'Experience Letter')
@@ -105,36 +140,41 @@ class HrEmployee(models.Model):
                     }
                 }
 
-    @api.onchange('from_upcoming_leave_date', 'to_upcoming_leave_date')
+    @api.onchange('from_current_leave_date', 'to_current_leave_date',
+                  'from_last_leave_date', 'to_last_leave_date',
+                  'from_upcoming_leave_date', 'to_upcoming_leave_date')
     def _onchange_leave_dates(self):
-        if self.from_upcoming_leave_date or self.to_upcoming_leave_date:
-            if self.from_upcoming_leave_date and self.to_upcoming_leave_date:
-                # Ensure the 'from' date is before the 'to' date
-                if self.from_upcoming_leave_date > self.to_upcoming_leave_date:
+        today = date.today()
+        for record in self:
+            for leave_type in [
+                ('from_current_leave_date', 'to_current_leave_date', "Current Leave"),
+                ('from_last_leave_date', 'to_last_leave_date', "Last Leave"),
+                ('from_upcoming_leave_date', 'to_upcoming_leave_date', "Upcoming Leave"),
+            ]:
+                from_date = getattr(record, leave_type[0])
+                to_date = getattr(record, leave_type[1])
+                if from_date and to_date:
+                    if from_date > to_date:
+                        return {
+                            'warning': {
+                                'title': "Invalid Date Range",
+                                'message': f"The 'From {leave_type[2]} Date' must be earlier than the 'To {leave_type[2]} Date'.",
+                            }
+                        }
+                if from_date and from_date < today:
                     return {
                         'warning': {
-                            'title': "Invalid Date Range",
-                            'message': "The 'From Upcoming Leave Date' must be earlier"
-                                       " than the 'To Upcoming Leave Date'.",
+                            'title': "Invalid Date",
+                            'message': f"The 'From {leave_type[2]} Date' must be in the future.",
                         }
                     }
-
-            # Ensure both dates are in the future
-            today = date.today()
-            if self.from_upcoming_leave_date and self.from_upcoming_leave_date < today:
-                return {
-                    'warning': {
-                        'title': "Invalid Date",
-                        'message': "The 'From Upcoming Leave Date' must be in the future.",
+                if to_date and to_date < today:
+                    return {
+                        'warning': {
+                            'title': "Invalid Date",
+                            'message': f"The 'To {leave_type[2]} Date' must be in the future.",
+                        }
                     }
-                }
-            if self.to_upcoming_leave_date and self.to_upcoming_leave_date < today:
-                return {
-                    'warning': {
-                        'title': "Invalid Date",
-                        'message': "The 'To Upcoming Leave Date' must be in the future.",
-                    }
-                }
 
     @api.depends('salary_detail_line_ids.amount', 'salary_detail_line_ids.salary_type')
     def _compute_total_allowances(self):
@@ -164,7 +204,7 @@ class HrEmployee(models.Model):
 
         for record in salary_master_records:
             salary_details.append((0, 0, {
-                'name': record.name,
+                'component_id': record.id,
                 'salary_type': record.salary_type,
                 'amount': 0.0,
                 'currency_id': res.get('currency_id'),
@@ -185,7 +225,7 @@ class HrEmployee(models.Model):
                 for record in salary_master_records:
                     salary_details.append((0, 0, {
                         'employee_id': employee.id,
-                        'name': record.name,
+                        'component_id': record.id,
                         'salary_type': record.salary_type,
                         'amount': 0.0,
                         'currency_id': employee.currency_id.id,
@@ -198,33 +238,37 @@ class HrEmployee(models.Model):
         return result
 
     def action_populate_salary_details(self):
-        # Iterate through all employees in the recordset
         for employee in self:
-            # Only populate if salary_detail_line_ids is empty
-            if not employee.salary_detail_line_ids:
-                salary_master_records = self.env['salary.master'].search([])
-                salary_details = []
+            # Get existing salary component IDs
+            existing_components = employee.salary_detail_line_ids.mapped('component_id.id')
 
-                for record in salary_master_records:
-                    salary_details.append((0, 0, {
-                        'employee_id': employee.id,
-                        'name': record.name,
-                        'salary_type': record.salary_type,
-                        'amount': 0.0,
-                        'currency_id': employee.currency_id.id,
-                        'remarks': '',
-                    }))
+            # Get all salary master records
+            salary_master_records = self.env['salary.master'].search([])
 
-                if salary_details:
-                    employee.write({'salary_detail_line_ids': salary_details})
+            # Create new salary details for missing components
+            salary_details = [
+                (0, 0, {
+                    'employee_id': employee.id,
+                    'component_id': record.id,
+                    'salary_type': record.salary_type,
+                    'amount': 0.0,
+                    'currency_id': employee.currency_id.id,
+                    'remarks': '',
+                })
+                for record in salary_master_records
+                if record.id not in existing_components
+            ]
 
-        # Optionally, return a message to notify the user
+            # Write new salary details if there are any
+            if salary_details:
+                employee.write({'salary_detail_line_ids': [(0, 0, detail[2]) for detail in salary_details]})
+
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
                 'title': 'Success',
-                'message': 'Salary details populated for all employees with blank salary details.',
+                'message': 'Salary details populated for this employees with blank salary details.',
                 'sticky': False,
             },
         }
@@ -356,7 +400,7 @@ class HrSalaryDetails(models.Model):
     _description = "Employee salary compensation details"
 
     employee_id = fields.Many2one('hr.employee', string="Employee")
-    name = fields.Char(string="Component")
+    component_id = fields.Many2one('salary.master', string="Component")
     salary_type = fields.Selection([('in_hand', 'In-hand'), ('others', 'Others')],
                                    string="Salary Type")
     amount = fields.Float(string="Amount")
