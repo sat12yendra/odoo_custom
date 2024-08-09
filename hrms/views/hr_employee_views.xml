@@ -13,6 +13,9 @@
                 <xpath expr="//field[@name='work_email']" position="after">
                     <field name="nssf_no" />
                 </xpath>
+                <xpath expr="//field[@name='job_title']" position="after">
+                    <field name="permit_position"  placeholder="Permit Position"/>
+                </xpath>
                 <xpath expr="//page[@name='skills_resume']" position="inside">
                     <group string="Job Description">
                         <field name="job_description" string=""/>
@@ -133,7 +136,6 @@
                 <xpath expr="//page[@name='hr_settings']" position="inside">
                     <group name="others" string="Others">
                         <group>
-                            <field name="permit_position" />
                             <field name="remarks" />
                         </group>
                         <group>
@@ -193,12 +195,6 @@
                             </tree>
                         </field>
                         <group name="note_group" col="6" class="mt-2 mt-md-0">
-                            <group colspan="4">
-                                <field  colspan="2" name="salary_hr_note" nolabel="1" placeholder="Hr Note..."/>
-                            </group>
-                            <group colspan="4">
-                                <field  colspan="2" name="salary_admin_note" nolabel="1" placeholder="Admin Note..."/>
-                            </group>
                             <group class="oe_subtotal_footer" colspan="2" name="salary_total">
                                 <field name="total_in_hand_allowance" colspan="2" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                 <field name="total_other_allowance" colspan="2" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
@@ -207,6 +203,14 @@
                             <group class="oe_subtotal_footer" colspan="2" name="salary_total">
                                 <field name="total_ctc" colspan="2" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                             </group>
+                        </group>
+                    </page>
+                    <page string="Note" name="hr_note">
+                        <group string="Hr Note">
+                            <field  colspan="2" name="salary_hr_note" nolabel="1" placeholder="Hr Note..."/>
+                        </group>
+                        <group string="Admin Note">
+                            <field  colspan="2" name="salary_admin_note" nolabel="1" placeholder="Admin Note..."/>
                         </group>
                     </page>
                 </xpath>
