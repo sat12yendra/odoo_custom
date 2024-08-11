@@ -4,26 +4,36 @@
         <record id="email_template_visa_reminder" model="mail.template">
             <field name="name">Visa Expiration Reminder</field>
             <field name="model_id" ref="hr.model_hr_employee"/>
-            <field name="subject">Your Visa Expires in ${ctx['days_left']} Days</field>
-            <field name="email_to">${object.work_email}</field>
+            <field name="subject">Reminder of visa renewal</field>
+            <field name="email_from"> </field>
+            <field name="email_to"> </field>
+            <field name="email_cc"> </field>
             <field name="body_html" type="html">
-                <p>The visa of ${object.name} expires at ${object.visa_expiration_date}.</p>
-                <p>Your visa is set to expire on ${object.visa_expiration_date}.</p>
-                <p>The ${ctx['days_left']} days left to renew it.</p>
-                <p>Thank you</p>
+                <p>Hello HR Manager</p><br> </br>
+                <p>This is a courtesy reminder that ${object.name} visa document will be expire on ${object.visa_expiration_date}.</p>
+                <p>Please provide an updated document as soon as possible.</p><br> </br><br> </br>
+                <p>Africab Group<br> </br>
+                Human Resource Department<br> </br>
+                Dar Es Salaam, Tanzania<br> </br>
+                Email:hr@africab.com</p>
             </field>
         </record>
 
         <record id="email_template_passport_reminder" model="mail.template">
             <field name="name">Passport Expiration Reminder</field>
             <field name="model_id" ref="hr.model_hr_employee"/>
-            <field name="subject">The passport Expires in ${ctx['days_left']} Days</field>
-            <field name="email_to">${object.work_email}</field>
+            <field name="subject">Reminder of passport renewal</field>
+            <field name="email_from"> </field>
+            <field name="email_to"> </field>
+            <field name="email_cc"> </field>
             <field name="body_html" type="html">
-                <p>The visa of ${object.name} expires at ${object.visa_expiration_date}.</p>
-                <p>Your visa is set to expire on ${object.visa_expiration_date}.</p>
-                <p>The ${ctx['days_left']} days left to renew it.</p>
-                <p>Thank you</p>
+                <p>Hello HR Manager</p><br> </br>
+                <p>This is a courtesy reminder that ${object.employee_name} passport document will be expire on ${object.passport_expiration_date}.</p>
+                <p>Please provide an updated document as soon as possible.</p><br> </br><br> </br>
+                <p>Africab Group<br> </br>
+                Human Resource Department<br> </br>
+                Dar Es Salaam, Tanzania<br> </br>
+                Email:hr@africab.com</p>
             </field>
         </record>
     </data>

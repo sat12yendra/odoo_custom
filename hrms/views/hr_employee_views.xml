@@ -18,7 +18,8 @@
                 </xpath>
                 <xpath expr="//page[@name='skills_resume']" position="inside">
                     <group string="Job Description">
-                        <field name="job_description" string=""/>
+                        <field name="job_description"/>
+                        <field name="job_description_file"/>
                     </group>
                 </xpath>
                 <xpath expr="//field[@name='coach_id']" position="after">
@@ -86,6 +87,8 @@
                                 <field name="passport_id"/>
                                 <field name="passport" filename="passport_file_name"/>
                                 <field name="passport_exp_date"/>
+                                <field name="passport_taken_date"/>
+                                <field name="passport_collect_date"/>
                                 <field name="birthday"/>
                                 <field name="place_of_birth"/>
                                 <field name="country_of_birth"/>
