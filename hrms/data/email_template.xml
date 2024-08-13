@@ -9,7 +9,7 @@
             <field name="email_to"> </field>
             <field name="email_cc"> </field>
             <field name="body_html" type="html">
-                <p>Hello HR Manager</p><br> </br>
+                <p>Hello HR Manager,</p><br> </br>
                 <p>This is a courtesy reminder that ${object.name} visa document will be expire on ${object.visa_expiration_date}.</p>
                 <p>Please provide an updated document as soon as possible.</p><br> </br><br> </br>
                 <p>Africab Group<br> </br>
@@ -27,9 +27,27 @@
             <field name="email_to"> </field>
             <field name="email_cc"> </field>
             <field name="body_html" type="html">
-                <p>Hello HR Manager</p><br> </br>
-                <p>This is a courtesy reminder that ${object.employee_name} passport document will be expire on ${object.passport_expiration_date}.</p>
+                <p>Hello HR Manager,</p><br> </br>
+                <p>This is a courtesy reminder that ${object.name} passport document will be expire on ${object.passport_expiration_date}.</p>
                 <p>Please provide an updated document as soon as possible.</p><br> </br><br> </br>
+                <p>Africab Group<br> </br>
+                Human Resource Department<br> </br>
+                Dar Es Salaam, Tanzania<br> </br>
+                Email:hr@africab.com</p>
+            </field>
+        </record>
+
+         <record id="email_template_passport_collect_date_expiration_reminder" model="mail.template">
+            <field name="name">Passport Collect Date Expiration Reminder</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="subject">Reminder of Passport Submission</field>
+            <field name="email_from"> </field>
+            <field name="email_to"> </field>
+            <field name="email_cc"> </field>
+            <field name="body_html" type="html">
+                <p>Hello ${object.name},</p><br> </br>
+                <p>This is a courtesy reminder that Mr. / Ms. ${object.employee_name}. Please submit your Passport to Head Office..</p>
+                <br> </br>
                 <p>Africab Group<br> </br>
                 Human Resource Department<br> </br>
                 Dar Es Salaam, Tanzania<br> </br>

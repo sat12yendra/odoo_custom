@@ -77,6 +77,7 @@ class HrEmployee(models.Model):
                                   ('SIKH', 'SIKH'), ('CHRISTIAN', 'CHRISTIAN'), ('Other', 'Other')], string="Community")
     job_description = fields.Text("Job Description")
     job_description_file = fields.Binary(string="Job Description File")
+    job_description_file_name = fields.Char()
     salary_hr_note = fields.Text("Hr Note")
     salary_admin_note = fields.Text("Admin Note")
 
@@ -329,6 +330,34 @@ class HrEmployee(models.Model):
                                          passport_expiration_date=employee.passport_exp_date).send_mail(
                     employee.id, email_values=email_values,
                     force_send=True)
+
+    @api.model
+    def _cron_send_passport_reminders(self):
+        today = fields.Date.today()
+        two_days_ago = today - timedelta(days=2)
+
+        # Find employees with expired passport collect dates and no reminder sent
+        employees = self.search([
+            ('passport_collect_date', '<', today),
+            ('passport_collect_date', '>=', two_days_ago),
+        ])
+
+        for employee in employees:
+            template_id = self.env.ref('hrms.email_template_passport_collect_date_expiration_reminder')
+            if template_id:
+                email_values = {
+                    'email_from': 'hr@africab.com',
+                    'email_to': employee.work_email,
+                    'email_cc': 'qutub@africab.co.tz,shabbir@africab.co.tz,taher.bhandari@africab.co.tz',
+                }
+                # Use with_context to pass additional variables to the email template
+                template_id.with_context(
+                    employee_name=employee.name,
+                    passport_expiration_date=employee.passport_collect_date
+                ).send_mail(
+                    employee.id, email_values=email_values,
+                    force_send=True
+                )
 
 
 class ResPartnerBank(models.Model):

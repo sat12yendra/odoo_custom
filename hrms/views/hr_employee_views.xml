@@ -19,7 +19,8 @@
                 <xpath expr="//page[@name='skills_resume']" position="inside">
                     <group string="Job Description">
                         <field name="job_description"/>
-                        <field name="job_description_file"/>
+                        <field name="job_description_file" filename="job_description_file_name"/>
+                        <field name="job_description_file_name" invisible="1"/>
                     </group>
                 </xpath>
                 <xpath expr="//field[@name='coach_id']" position="after">
