@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem
+            id="hr.menu_hr_employee"
+            name="Directory"
+            action="hr.hr_employee_public_action"
+            parent="hr.menu_hr_root"
+            sequence="4" active="False"/>
+
+        <menuitem
+            id="hr.menu_hr_employee_payroll"
+            name="Employees"
+            parent="hr.menu_hr_root"
+            groups="hr.group_hr_user,group_hr_manager,group_hr_salary,group_hr_management,group_hr_hod,group_hr_admin_2,group_hr_admin_1,group_hr_executive"
+            sequence="3"/>
+
+    </data>
+</odoo>

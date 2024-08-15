@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_page_configuration_form" model="ir.ui.view">
+        <field name="name">page.configuration.form</field>
+        <field name="model">page.configuration</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree view for managing page restrictions -->
+    <record id="view_page_configuration_tree" model="ir.ui.view">
+        <field name="name">page.configuration.tree</field>
+        <field name="model">page.configuration</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Inherit the existing res.users form view -->
+    <record id="view_res_users_form_hide_page_inherit" model="ir.ui.view">
+        <field name="name">res.users.form.inherit.hide.page</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="hide_specific_page]" string="Hide Specific Page">
+                    <field name="page_configuration_ids" widget='many2many_tags'>
+                        <tree editable='bottom'>
+                            <field name="name"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+
+    <!-- Action for page restrictions menu -->
+    <record id="action_page_configuration" model="ir.actions.act_window">
+        <field name="name">Page Restrictions</field>
+        <field name="res_model">page.configuration</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu item for page restrictions -->
+    <menuitem id="menu_page_config"
+              name="Page Restrictions"
+              parent="base.menu_administration"
+              action="action_page_configuration"
+              sequence="10"
+              groups="base.group_system"/>
+</odoo>

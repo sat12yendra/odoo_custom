@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="assets_backend" name="Custom JS for Form View" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <!-- Ensure OWL path is correct -->
+            <script src="/web/static/lib/owl/owl.js"></script>
+            <!-- Ensure custom JS path is correct -->
+            <script src="/hide_page_user/static/src/js/page_restriction.js"></script>
+        </xpath>
+    </template>
+</odoo>

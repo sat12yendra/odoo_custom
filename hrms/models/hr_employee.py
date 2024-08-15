@@ -107,12 +107,13 @@ class HrEmployee(models.Model):
     def _onchange_aadhaar_no(self):
         return self._check_file_size('aadhaar_no', 'Aadhaar Card No.')
 
+    @api.onchange('medical_certificate')
     def _onchange_medical_certificate(self):
         return self._check_file_size('medical_certificate', 'Medical Certificate')
 
     @api.onchange('pcc_certificate')
     def _onchange_pcc_certificate(self):
-        return self._check_file_size('uploaded_file_3', 'File 3')
+        return self._check_file_size('pcc_certificate', 'PCC Certificate')
 
     @api.onchange('passport')
     def _onchange_passport(self):
