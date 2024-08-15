@@ -14,12 +14,12 @@ class HrEmployee(models.Model):
                  'from_upcoming_leave_date', 'to_upcoming_leave_date')
     def _compute_days(self):
         for record in self:
-            # Calculate current days
-            record.total_current_days = self._calculate_days(record.from_current_leave_date, record.to_current_leave_date)
-            # Calculate last days
-            record.total_last_days = self._calculate_days(record.from_last_leave_date, record.to_last_leave_date)
-            # Calculate upcoming days
-            record.total_upcoming_days = self._calculate_days(record.from_upcoming_leave_date, record.to_upcoming_leave_date)
+            record.total_current_days = self._calculate_days(record.from_current_leave_date,
+                                                             record.to_current_leave_date)
+            record.total_last_days = self._calculate_days(record.from_last_leave_date,
+                                                          record.to_last_leave_date)
+            record.total_upcoming_days = self._calculate_days(record.from_upcoming_leave_date,
+                                                              record.to_upcoming_leave_date)
 
     def _calculate_days(self, start_date, end_date):
         if start_date and end_date:

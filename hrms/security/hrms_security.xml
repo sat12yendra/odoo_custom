@@ -59,4 +59,12 @@
           (4, ref('group_hr_admin_1')), (4, ref('group_hr_executive')), (4, ref('group_hr_manager'))]"/>
         <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
     </record>
+
+    <!-- Record rule -->
+    <record id="hr_employee_see_own_and_child_records_rule" model="ir.rule">
+        <field name="name">Manager: See Own and Child Employee Records</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="domain_force">[('parent_id.user_id','=',user.id)]</field>
+        <field name="groups" eval="[(4, ref('hrms.group_hr_hod'))]"/>
+    </record>
 </odoo>
