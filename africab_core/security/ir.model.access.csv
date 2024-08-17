@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_super_res_users,africab_core.res.users,base.model_res_users,africab_core.group_system_super_admin,1,1,1,1
+access_super_res_company,africab_core.res.company,base.model_res_company,africab_core.group_system_super_admin,1,1,1,1

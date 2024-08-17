@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="group_hr_manager" model="res.groups">
-        <field name="name">Manager</field>
+    <record id="group_hr_user_manager" model="res.groups">
+        <field name="name">Hr Manager</field>
         <field name="category_id" ref="base.module_category_human_resources_employees"/>
         <field name="implied_ids" eval="[(6, 0, [ref('base.group_user')]), (4, ref('hr.group_hr_user'))]"/>
         <field name="comment">The user will be able to approve document created by employees.</field>
@@ -29,13 +29,6 @@
         <field name="comment">CAN WRITE HIS OWN DEPARTMENT EMPLOYEES.</field>
     </record>
 
-    <record id="group_hr_management" model="res.groups">
-        <field name="name">Management</field>
-        <field name="category_id" ref="base.module_category_human_resources_employees"/>
-        <field name="implied_ids" eval="[(6, 0, [ref('base.group_user')]), (4, ref('hr.group_hr_user'))]"/>
-        <field name="comment">View all records but no one can view his record except super admin.</field>
-    </record>
-
     <record id="group_hr_executive" model="res.groups">
         <field name="name">Hr Executive</field>
         <field name="category_id" ref="base.module_category_human_resources_employees"/>
@@ -43,28 +36,40 @@
         <field name="comment">Allow view, edit, add, no delete and no configuration.</field>
     </record>
 
-    <record id="group_hr_salary" model="res.groups">
-        <field name="name">Salary</field>
-        <field name="category_id" ref="base.module_category_human_resources_employees"/>
-        <field name="implied_ids" eval="[(6, 0, [ref('base.group_user')])]"/>
-        <field name="comment">Allow user only see the salary.</field>
-    </record>
-
     <record id="hr.group_hr_manager" model="res.groups">
-        <field name="name">Super Admin</field>
+        <field name="name">Hr Super Admin</field>
         <field name="comment">The user will have access to the human resources configuration as well as statistic reports.</field>
         <field name="category_id" ref="base.module_category_human_resources_employees"/>
-        <field name="implied_ids" eval="[(4, ref('hr.group_hr_user')), (4, ref('group_hr_salary')),
-         (4, ref('group_hr_management')), (4, ref('group_hr_hod')), (4, ref('group_hr_admin_2')),
-          (4, ref('group_hr_admin_1')), (4, ref('group_hr_executive')), (4, ref('group_hr_manager'))]"/>
+        <field name="implied_ids" eval="[(4, ref('hr.group_hr_user')),(4, ref('group_hr_hod')), (4, ref('group_hr_admin_2')),
+          (4, ref('group_hr_admin_1')), (4, ref('group_hr_executive')), (4, ref('group_hr_user_manager'))]"/>
         <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
     </record>
+
+        <record id="hr.group_hr_user" model="res.groups">
+            <field name="name">Support: Always Active</field>
+            <field name="category_id" ref="base.module_category_human_resources_employees"/>
+            <field name="implied_ids" eval="[(6, 0, [ref('base.group_user')])]"/>
+            <field name="comment">This is support access group for all kind of employee's</field>
+        </record>
 
     <!-- Record rule -->
     <record id="hr_employee_see_own_and_child_records_rule" model="ir.rule">
         <field name="name">Manager: See Own and Child Employee Records</field>
         <field name="model_id" ref="hr.model_hr_employee"/>
-        <field name="domain_force">[('parent_id.user_id','=',user.id)]</field>
-        <field name="groups" eval="[(4, ref('hrms.group_hr_hod'))]"/>
+        <field name="domain_force">[
+            '|',
+            ('parent_id.user_id', '=', user.id),
+            ('user_id', '=', user.id)
+        ]</field>
+        <field name="groups" eval="[(4, ref('hrms.group_hr_hod')), (4, ref('base.group_user')), ]"/>
     </record>
+
+    <record id="hr_employee_super_admin_see_all_rule" model="ir.rule">
+        <field name="name">Super Admin: See All Employee Records</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('base.group_system')), (4, ref('hr.group_hr_manager'))]"/>
+    </record>
+
+
 </odoo>

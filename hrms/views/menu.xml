@@ -13,7 +13,7 @@
             id="hr.menu_hr_employee_payroll"
             name="Employees"
             parent="hr.menu_hr_root"
-            groups="hr.group_hr_user,group_hr_manager,group_hr_salary,group_hr_management,group_hr_hod,group_hr_admin_2,group_hr_admin_1,group_hr_executive"
+            groups="hr.group_hr_user,group_hr_user_manager,group_hr_hod,group_hr_admin_2,group_hr_admin_1,group_hr_executive"
             sequence="3"/>
 
     </data>

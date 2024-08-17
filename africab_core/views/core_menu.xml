@@ -1,0 +1,16 @@
+<odoo>
+  <data>
+    <menuitem id="base.menu_custom" name="Technical" sequence="110" groups="base.group_system">
+        <menuitem id="next_id_2" name="User Interface"/>
+        <menuitem id="menu_email" name="Email" sequence="1"/>
+        <menuitem id="next_id_9" name="Database Structure"/>
+        <menuitem id="menu_automation" name="Automation"/>
+        <menuitem id="menu_security" name="Security" sequence="25"/>
+        <menuitem id="menu_ir_property" name="Parameters" sequence="24"/>
+    </menuitem>
+
+      <menuitem id="base.menu_translation" name="Translations" sequence="2" groups="base.group_system"/>
+      <menuitem action="base.action_res_groups" id="base.menu_action_res_groups" parent="base.menu_users"
+                groups="base.group_system" sequence="3"/>
+  </data>
+</odoo>

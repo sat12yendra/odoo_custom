@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_page_configuration_user,access_page_restriction_user,model_page_configuration,base.group_user,1,0,0,0
 access_page_configuration_manager,access_page_restriction_manager,model_page_configuration,base.group_system,1,1,1,1
+access_super_page_restriction,africab_core.page_restriction,model_page_configuration,africab_core.group_system_super_admin,1,1,1,1
