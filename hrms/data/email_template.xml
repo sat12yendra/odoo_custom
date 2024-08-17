@@ -9,15 +9,21 @@
             <field name="email_to"> </field>
             <field name="email_cc"> </field>
             <field name="body_html" type="html">
-                <p>Hello HR Manager,</p><br> </br>
-                <p>This is a courtesy reminder that ${object.name} visa document will be expire on ${object.visa_expiration_date}.</p>
-                <p>Please provide an updated document as soon as possible.</p><br> </br><br> </br>
-                <p>Africab Group<br> </br>
-                Human Resource Department<br> </br>
-                Dar Es Salaam, Tanzania<br> </br>
-                Email:hr@africab.com</p>
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="box-sizing:border-box;margin: 0px; padding: 0px; font-size: 13px;">
+                        Hello HR Manager,<br/>
+                        This is a courtesy reminder that <t t-esc="object.name or ''"/> visa document will expire on
+                        <t t-esc="object.business_visa_exp_date and object.business_visa_exp_date.strftime('%Y-%m-%d %H:%M') or ''"/>.<br/>
+                        Please provide an updated document as soon as possible. <br/><br/>
+                        Africab Group<br/>
+                        Human Resource Department<br/>
+                        Dar Es Salaam, Tanzania<br/>
+                        Email: hr@africab.com<br/>
+                    </p>
+                </div>
             </field>
         </record>
+
 
         <record id="email_template_passport_reminder" model="mail.template">
             <field name="name">Passport Expiration Reminder</field>
