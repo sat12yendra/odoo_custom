@@ -53,7 +53,7 @@
             <field name="email_cc"> </field>
             <field name="body_html" type="html">
                 <p>Hello <t t-esc="object.name or ''"/>,</p><br> </br>
-                <p>This is a courtesy reminder that <t t-esc="object.name or ''"/> Please submit your Passport to Head Office.</p>
+                <p>This is a courtesy reminder that please submit your passport to head office.</p>
                 <br> </br>
                 <p>Africab Group<br> </br>
                 Human Resource Department<br> </br>
