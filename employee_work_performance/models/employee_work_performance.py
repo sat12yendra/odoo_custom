@@ -22,8 +22,14 @@ class EmployeeWorkPerformance(models.Model):
     parent_id = fields.Many2one(related='employee_id.parent_id', string='Manager', tracking=True)
     date = fields.Date("Date", tracking=True)
     year_of_kpi = fields.Char("Year of KPI", readonly=True, tracking=True)
-    create_kpi_ids = fields.One2many('create.kpi',
-                                     'employee_work_performance_id', string="Create KPI")
+    employee_kpi_ids = fields.One2many('employee.kpi',
+                                     'employee_work_performance_id', string="Employee KPI")
+    employee_task_ids = fields.One2many('employee.task',
+                                             'employee_work_performance_id', string="Employee behaviour")
+    employee_behaviour_ids = fields.One2many('employee.behaviour',
+                                     'employee_work_performance_id', string="Employee behaviour")
+    employee_innovation_ids = fields.One2many('employee.innovation',
+                                             'employee_work_performance_id', string="Employee behaviour")
 
     @api.onchange('date')
     def _onchange_date(self):

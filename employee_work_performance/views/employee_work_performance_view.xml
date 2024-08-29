@@ -23,9 +23,45 @@
                             </group>
                         </group>
                         <notebook>
-                            <page name="create_kpi" string="Create KPI">
+                            <page name="employee_kpi" string="Employee KPI">
                                 <group>
-                                    <field name="create_kpi_ids" string="">
+                                    <field name="employee_kpi_ids" string="">
+                                        <tree editable="bottom">
+                                            <field name="name"/>
+                                            <field name="rating" widget="priority"/>
+                                            <field name="remarks"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page name="employee_task" string="Employee Task">
+                                <group>
+                                    <field name="employee_task_ids" string="">
+                                        <tree editable="bottom">
+                                            <field name="task_create_date"/>
+                                            <field name="task_assign_date"/>
+                                            <field name="task_completed_date"/>
+                                            <field name="rating" widget="priority"/>
+                                            <field name="remarks"/>
+                                            <field name="name"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page name="employee_behaviour" string="Employee Behaviour">
+                                <group>
+                                    <field name="employee_behaviour_ids" string="">
+                                        <tree editable="bottom">
+                                            <field name="name"/>
+                                            <field name="rating" widget="priority"/>
+                                            <field name="remarks"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page name="employee_innovation" string="Employee Innovation">
+                                <group>
+                                    <field name="employee_innovation_ids" string="">
                                         <tree editable="bottom">
                                             <field name="name"/>
                                             <field name="rating" widget="priority"/>
