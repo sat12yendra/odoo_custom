@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_employee_work_performance_form" model="ir.ui.view">
+            <field name="name">employee.work.performance.form</field>
+            <field name="model">employee.work.performance</field>
+            <field name="arch" type="xml">
+                <form string="Employee Work Performance">
+                    <sheet>
+                        <field name="company_id" invisible="1"/>
+                        <group>
+                            <group>
+                                <field name="employee_id" widget="many2one_avatar_user" required="1"
+                                       options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
+                                <field name="job_id"/>
+                                <field name="date"/>
+                                <field name="permit_position"/>
+                            </group>
+                            <group>
+                                <field name="department_id"/>
+                                <field name="parent_id"/>
+                                <field name="year_of_kpi" force_save="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="create_kpi" string="Create KPI">
+                                <group>
+                                    <field name="create_kpi_ids" string="">
+                                        <tree editable="bottom">
+                                            <field name="name"/>
+                                            <field name="rating" widget="priority"/>
+                                            <field name="remarks"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <!-- Chatter -->
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_employee_work_performance_tree" model="ir.ui.view">
+            <field name="name">employee.work.performance.view.tree</field>
+            <field name="model">employee.work.performance</field>
+            <field name="arch" type="xml">
+                <tree string="Employee Work Performance">
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="job_id"/>
+                    <field name="parent_id"/>
+                    <field name="date"/>
+                    <field name="year_of_kpi"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_employee_work_performance_search" model="ir.ui.view">
+            <field name="name">employee.work.performance.view.search</field>
+            <field name="model">employee.work.performance</field>
+            <field name="arch" type="xml">
+                <search string="Employee Work Performance Search">
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="job_id"/>
+                    <field name="parent_id"/>
+                    <field name="date"/>
+                    <field name="year_of_kpi"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_employee_work_performance" model="ir.actions.act_window">
+            <field name="name">Employee Work Performance</field>
+            <field name="res_model">employee.work.performance</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create Employee Work Performance
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

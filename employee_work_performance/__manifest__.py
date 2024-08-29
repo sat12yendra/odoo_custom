@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Africab Core",
+    'name': "Employee Work Performance",
 
     'summary': "Short (1 phrase/line) summary of the module's purpose",
 
@@ -18,15 +18,14 @@ Long description of module's purpose
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'hr', 'hrms', 'hide_menu_user', 'hide_page_user',
-                'model_access_rights', 'odoo_readonly_user'],
+    'depends': ['hrms'],
 
     # always loaded
     'data': [
-        'security/core_security.xml',
         'security/ir.model.access.csv',
-        # 'views/core_view.xml',
-        'views/core_menu.xml',
+        'views/create_behaviour_view.xml',
+        'views/employee_work_performance_view.xml',
+        'views/menu.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

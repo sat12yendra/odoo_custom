@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_employee_work_performance_manager,employee.work.performance.manager,model_employee_work_performance,hrms.group_hr_user_manager,1,1,1,1
+access_employee_work_performance_hod,employee.work.performance.hod,model_employee_work_performance,hrms.group_hr_hod,1,1,1,1
+
+access_create_kpi_manager,create.kpi.manager,model_create_kpi,hrms.group_hr_user_manager,1,1,1,1
+access_create_kpi_hod,create.kpi.hod,model_create_kpi,hrms.group_hr_hod,1,1,1,1
+
+access_create_behaviour_manager,create.behaviour.manager,model_create_behaviour,hrms.group_hr_user_manager,1,1,1,1
+access_create_behaviour_hod,create.behaviour.hod,model_create_behaviour,hrms.group_hr_hod,1,1,1,1

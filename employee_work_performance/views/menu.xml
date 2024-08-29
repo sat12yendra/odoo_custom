@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem
+            id="menu_root_employee_work_performance"
+            name="Employee Work Performance"
+            web_icon="employee_work_performance,static/description/icon.png"
+            groups="hrms.group_hr_user_manager,hrms.group_hr_hod"/>
+
+        <menuitem
+            id="menu_employee_work_performance"
+            name="Employee Work Performance"
+            action="action_employee_work_performance"
+            parent="menu_root_employee_work_performance"
+            sequence="1"/>
+
+        <menuitem
+            id="menu_employee_work_performance_configuration"
+            name="Configuration"
+            parent="menu_root_employee_work_performance"
+            sequence="2"/>
+
+        <menuitem
+            id="menu_create_behaviour"
+            name="Create behaviour"
+            action="create_behaviour_master_action"
+            parent="menu_employee_work_performance_configuration"
+            sequence="1"/>
+    </data>
+</odoo>

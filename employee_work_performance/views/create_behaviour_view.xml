@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="create_behaviour_master_tree_view" model="ir.ui.view">
+            <field name="name">create.behaviour.master.view.tree</field>
+            <field name="model">create.behaviour</field>
+            <field name="arch" type="xml">
+                <tree string="Create Behaviour" editable="bottom">
+                    <field name="name" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="create_behaviour_master_action" model="ir.actions.act_window">
+            <field name="name">Create Behaviour</field>
+            <field name="res_model">create.behaviour</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new Create Behaviour master
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>
