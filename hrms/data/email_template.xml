@@ -9,18 +9,16 @@
             <field name="email_to"> </field>
             <field name="email_cc"> </field>
             <field name="body_html" type="html">
-                <div style="margin: 0px; padding: 0px;">
-                    <p style="box-sizing:border-box;margin: 0px; padding: 0px; font-size: 13px;">
-                        Hello HR Manager,<br/>
-                        This is a courtesy reminder that <t t-esc="object.name or ''"/> visa document will expire on
-                        <t t-esc="object.business_visa_exp_date and object.business_visa_exp_date.strftime('%Y-%m-%d %H:%M') or ''"/>.<br/>
-                        Please provide an updated document as soon as possible. <br/><br/>
-                        Africab Group<br/>
-                        Human Resource Department<br/>
-                        Dar Es Salaam, Tanzania<br/>
-                        Email: hr@africab.com<br/>
-                    </p>
-                </div>
+                <p>Hello HR Manager,</p><br> </br>
+                <p>This is a courtesy reminder that
+                    <t t-esc="object.name or ''"/>
+                    visa document will expire on <t t-esc="object.visa_expire and object.visa_expire.strftime('%d %B %Y') or ''"/>.
+                </p>
+                <p>Please provide an updated document as soon as possible.</p><br> </br><br> </br>
+                <p>Africab Group<br> </br>
+                Human Resource Department<br> </br>
+                Dar Es Salaam, Tanzania<br> </br>
+                Email:hr@africab.com</p>
             </field>
         </record>
 
@@ -34,7 +32,10 @@
             <field name="email_cc"> </field>
             <field name="body_html" type="html">
                 <p>Hello HR Manager,</p><br> </br>
-                <p>This is a courtesy reminder that ${object.name} passport document will be expire on ${object.passport_expiration_date}.</p>
+                <p>This is a courtesy reminder that
+                    <t t-esc="object.name or ''"/>
+                    passport document will be expire on <t t-esc="object.passport_exp_date and object.passport_exp_date.strftime('%d %B %Y') or ''"/>.
+                </p>
                 <p>Please provide an updated document as soon as possible.</p><br> </br><br> </br>
                 <p>Africab Group<br> </br>
                 Human Resource Department<br> </br>
@@ -51,8 +52,8 @@
             <field name="email_to"> </field>
             <field name="email_cc"> </field>
             <field name="body_html" type="html">
-                <p>Hello ${object.name},</p><br> </br>
-                <p>This is a courtesy reminder that Mr. / Ms. ${object.employee_name}. Please submit your Passport to Head Office..</p>
+                <p>Hello <t t-esc="object.name or ''"/>,</p><br> </br>
+                <p>This is a courtesy reminder that please submit your passport to head office.</p>
                 <br> </br>
                 <p>Africab Group<br> </br>
                 Human Resource Department<br> </br>

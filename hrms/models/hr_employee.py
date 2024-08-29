@@ -40,7 +40,7 @@ class HrEmployee(models.Model):
     medical_certificate = fields.Binary(string="Medical Certificate")
     pcc_certificate = fields.Binary(string="PCC Certificate")
 
-    business_visa_exp_date = fields.Date(string="Business Visa Exp. Date")
+    # business_visa_exp_date = fields.Date(string="Business Visa Exp. Date")
     special_pass_exp_date = fields.Date(string="Special Pass Exp. Date")
 
     passport = fields.Binary(string="Passport")
@@ -289,8 +289,8 @@ class HrEmployee(models.Model):
 
         # Find employees with visa expiring within the next 3 months
         employees = self.search([
-            ('business_visa_exp_date', '>=', today),
-            ('business_visa_exp_date', '<=', ninty_days_later)
+            ('visa_expire', '>=', today),
+            ('visa_expire', '<=', ninty_days_later)
         ])
 
         for employee in employees:
@@ -301,11 +301,7 @@ class HrEmployee(models.Model):
                     'email_to': 'qutub@africab.co.tz,shabbir@africab.co.tz',
                     'email_cc': employee.work_email
                 }
-                # Use with_context to pass additional variables to the email template
-                template_id.with_context(employee_name=employee.name,
-                                         visa_expiration_date=employee.business_visa_exp_date).send_mail(
-                    employee.id, email_values=email_values,
-                    force_send=True)
+                template_id.send_mail(employee.id, email_values=email_values, force_send=True)
 
     @api.model
     def _cron_send_passport_expiration_reminders(self):
@@ -326,21 +322,16 @@ class HrEmployee(models.Model):
                     'email_to': 'qutub@africab.co.tz,shabbir@africab.co.tz',
                     'email_cc': employee.work_email
                 }
-                # Use with_context to pass additional variables to the email template
-                template_id.with_context(employee_name=employee.name,
-                                         passport_expiration_date=employee.passport_exp_date).send_mail(
-                    employee.id, email_values=email_values,
-                    force_send=True)
+                template_id.send_mail(employee.id, email_values=email_values, force_send=True)
 
     @api.model
-    def _cron_send_passport_reminders(self):
+    def _cron_send_passport_collect_date_expiration_reminders(self):
         today = fields.Date.today()
         two_days_ago = today - timedelta(days=2)
 
         # Find employees with expired passport collect dates and no reminder sent
         employees = self.search([
-            ('passport_collect_date', '<', today),
-            ('passport_collect_date', '>=', two_days_ago),
+            ('passport_collect_date', '<', two_days_ago)
         ])
 
         for employee in employees:
@@ -351,14 +342,7 @@ class HrEmployee(models.Model):
                     'email_to': employee.work_email,
                     'email_cc': 'qutub@africab.co.tz,shabbir@africab.co.tz,taher.bhandari@africab.co.tz',
                 }
-                # Use with_context to pass additional variables to the email template
-                template_id.with_context(
-                    employee_name=employee.name,
-                    passport_expiration_date=employee.passport_collect_date
-                ).send_mail(
-                    employee.id, email_values=email_values,
-                    force_send=True
-                )
+                template_id.send_mail(employee.id, email_values=email_values, force_send=True)
 
 
 class ResPartnerBank(models.Model):
