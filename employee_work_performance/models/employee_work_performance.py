@@ -73,3 +73,23 @@ class EmployeeWorkPerformance(models.Model):
                 'email_cc': self.employee_id.parent_id.work_email
             }
             template_id.send_mail(self.id, email_values=email_values, force_send=True)
+
+    def action_send_behaviour_mail(self):
+        template_id = self.env.ref('employee_work_performance.email_template_send_behaviour')
+        if template_id:
+            email_values = {
+                'email_from': 'hr@africab.com',
+                'email_to': self.employee_id.work_email,
+                'email_cc': self.employee_id.parent_id.work_email
+            }
+            template_id.send_mail(self.id, email_values=email_values, force_send=True)
+
+    def action_send_innovation_mail(self):
+        template_id = self.env.ref('employee_work_performance.email_template_send_innovation')
+        if template_id:
+            email_values = {
+                'email_from': 'hr@africab.com',
+                'email_to': self.employee_id.work_email,
+                'email_cc': self.employee_id.parent_id.work_email
+            }
+            template_id.send_mail(self.id, email_values=email_values, force_send=True)

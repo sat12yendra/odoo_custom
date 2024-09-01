@@ -60,6 +60,7 @@
                                         </tree>
                                     </field>
                                 </group>
+                                <button name="action_send_behaviour_mail" type="object" string="Send Behaviour Email" class="btn-primary"/>
                             </page>
                             <page name="employee_innovation" string="Employee Innovation">
                                 <group>
@@ -71,6 +72,7 @@
                                         </tree>
                                     </field>
                                 </group>
+                                <button name="action_send_innovation_mail" type="object" string="Send Innovation Email" class="btn-primary"/>
                             </page>
                         </notebook>
                     </sheet>

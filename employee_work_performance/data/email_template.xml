@@ -50,5 +50,51 @@
             </field>
         </record>
 
+        <record id="email_template_send_behaviour" model="mail.template">
+            <field name="name">Send Employee Behaviour</field>
+            <field name="model_id" ref="employee_work_performance.model_employee_work_performance"/>
+            <field name="subject">Behaviour</field>
+            <field name="email_from"> </field>
+            <field name="email_to"> </field>
+            <field name="email_cc"> </field>
+            <field name="body_html" type="html">
+                <p>Hello <t t-esc="object.employee_id.name or ''"/>,</p><br> </br>
+                <p>Please take a look at the task assigned to you below... Could you please close this task as TAT has given it?</p>
+                <t t-set="i" t-value="1" />
+                <t t-foreach="object.employee_behaviour_ids" t-as="behaviour">
+                    <p><span t-esc="i"/>. <span t-field="behaviour.name"/></p>
+                    <t t-set="i" t-value="i+1"/>
+                </t>
+                <br> </br><br> </br>
+                <p>Africab Group<br> </br>
+                Human Resource Department<br> </br>
+                Dar Es Salaam, Tanzania<br> </br>
+                Email:hr@africab.com</p>
+            </field>
+        </record>
+
+        <record id="email_template_send_innovation" model="mail.template">
+            <field name="name">Send Employee Innovation</field>
+            <field name="model_id" ref="employee_work_performance.model_employee_work_performance"/>
+            <field name="subject">innovation</field>
+            <field name="email_from"> </field>
+            <field name="email_to"> </field>
+            <field name="email_cc"> </field>
+            <field name="body_html" type="html">
+                <p>Hello <t t-esc="object.employee_id.name or ''"/>,</p><br> </br>
+                <p>Please take a look at the task assigned to you below... Could you please close this task as TAT has given it?</p>
+                <t t-set="i" t-value="1" />
+                <t t-foreach="object.employee_innovation_ids" t-as="innovation">
+                    <p><span t-esc="i"/>. <span t-field="innovation.name"/></p>
+                    <t t-set="i" t-value="i+1"/>
+                </t>
+                <br> </br><br> </br>
+                <p>Africab Group<br> </br>
+                Human Resource Department<br> </br>
+                Dar Es Salaam, Tanzania<br> </br>
+                Email:hr@africab.com</p>
+            </field>
+        </record>
+
     </data>
 </odoo>
