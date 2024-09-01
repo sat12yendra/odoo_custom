@@ -37,3 +37,39 @@ class EmployeeWorkPerformance(models.Model):
             self.year_of_kpi = self.date.strftime('%Y')
         else:
             self.year_of_kpi = False
+
+    @api.onchange('employee_id')
+    def _onchange_get_department_kpi(self):
+        kpi_master_data = self.env["kpi.master"].search([
+            ('department_id', '=', self.employee_id.department_id.id)
+        ])
+
+        employee_kpi_list = []
+        if kpi_master_data:
+            for rec in kpi_master_data.kpi_ids:
+                employee_kpi_list += [{
+                    'name': rec.name,
+                    'rating': '0'
+                }]
+
+        self.employee_kpi_ids = [(5, 0, 0)] + [(0, 0, rec) for rec in employee_kpi_list]
+
+    def action_send_kpi_mail(self):
+        template_id = self.env.ref('employee_work_performance.email_template_send_kpi')
+        if template_id:
+            email_values = {
+                'email_from': 'hr@africab.com',
+                'email_to': self.employee_id.work_email,
+                'email_cc': self.employee_id.parent_id.work_email
+            }
+            template_id.send_mail(self.id, email_values=email_values, force_send=True)
+
+    def action_send_task_mail(self):
+        template_id = self.env.ref('employee_work_performance.email_template_send_task')
+        if template_id:
+            email_values = {
+                'email_from': 'hr@africab.com',
+                'email_to': self.employee_id.work_email,
+                'email_cc': self.employee_id.parent_id.work_email
+            }
+            template_id.send_mail(self.id, email_values=email_values, force_send=True)

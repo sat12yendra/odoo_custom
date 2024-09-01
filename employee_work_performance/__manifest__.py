@@ -23,7 +23,9 @@ Long description of module's purpose
     # always loaded
     'data': [
         'security/ir.model.access.csv',
+        'data/email_template.xml',
         'views/behaviour_master_view.xml',
+        'views/kpi_master_view.xml',
         'views/employee_work_performance_view.xml',
         'views/menu.xml',
     ],

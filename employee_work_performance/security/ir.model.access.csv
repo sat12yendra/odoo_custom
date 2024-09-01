@@ -16,3 +16,9 @@ access_employee_behaviour_hod,employee.behaviour.hod,model_employee_behaviour,hr
 
 access_employee_innovation_manager,employee.innovation.manager,model_employee_innovation,hrms.group_hr_user_manager,1,1,1,1
 access_employee_innovation_hod,employee.innovation.hod,model_employee_innovation,hrms.group_hr_hod,1,1,1,1
+
+access_kpi_master_manager,kpi.master.manager,model_kpi_master,hrms.group_hr_user_manager,1,1,1,1
+access_kpi_master_hod,kpi.master.hod,model_kpi_master,hrms.group_hr_hod,1,1,1,1
+
+access_kpi_master_line_manager,kpi.master.line.manager,model_kpi_master_line,hrms.group_hr_user_manager,1,1,1,1
+access_kpi_master_line_hod,kpi.master.line.hod,model_kpi_master_line,hrms.group_hr_hod,1,1,1,1

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="kpi_master_form_view" model="ir.ui.view">
+            <field name="name">kpi.master.view.form</field>
+            <field name="model">kpi.master</field>
+            <field name="arch" type="xml">
+                <form string="KPI Master">
+                    <sheet>
+                        <group>
+                            <field name="department_id" />
+                        </group>
+                        <field name="company_id" invisible="1"/>
+                        <field name="kpi_ids" string="KPIs">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="kpi_master_tree_view" model="ir.ui.view">
+            <field name="name">kpi.master.view.tree</field>
+            <field name="model">kpi.master</field>
+            <field name="arch" type="xml">
+                <tree string="KPI Master">
+                    <field name="department_id"/>
+                    <field name="kpi_ids" widget="many2many_tags"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="create_kpi_master_action" model="ir.actions.act_window">
+            <field name="name">KPI Master</field>
+            <field name="res_model">kpi.master</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create KPI master
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

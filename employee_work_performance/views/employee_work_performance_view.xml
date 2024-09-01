@@ -33,6 +33,7 @@
                                         </tree>
                                     </field>
                                 </group>
+                                <button name="action_send_kpi_mail" type="object" string="Send KPI Email" class="btn-primary"/>
                             </page>
                             <page name="employee_task" string="Employee Task">
                                 <group>
@@ -47,6 +48,7 @@
                                         </tree>
                                     </field>
                                 </group>
+                                <button name="action_send_task_mail" type="object" string="Send Task Email" class="btn-primary"/>
                             </page>
                             <page name="employee_behaviour" string="Employee Behaviour">
                                 <group>
