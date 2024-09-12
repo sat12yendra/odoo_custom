@@ -78,6 +78,13 @@ class HrEmployee(models.Model):
     job_description = fields.Text("Job Description")
     job_description_file = fields.Binary(string="Job Description File")
     job_description_file_name = fields.Char()
+
+    letter_of_introduction_file = fields.Binary(string="Letter of Introduction")
+    letter_of_introduction_file_name = fields.Char()
+
+    guarantee_letter_file = fields.Binary(string="Guarantee Letter")
+    guarantee_letter_file_name = fields.Char()
+
     salary_hr_note = fields.Text("Hr Note")
     salary_admin_note = fields.Text("Admin Note")
 
@@ -94,6 +101,7 @@ class HrEmployee(models.Model):
                                                    string="Compensation Details Lines")
     salary_detail_line_ids = fields.One2many('hr.salary.details', 'employee_id',
                                              string="Salary Details Lines")
+    employee_lang_ids = fields.Many2many('res.lang', string="Language Known")
 
     @api.onchange('has_work_permit')
     def _onchange_has_work_permit(self):
@@ -157,7 +165,7 @@ class HrEmployee(models.Model):
         for record in self:
             for leave_type in [
                 ('from_current_leave_date', 'to_current_leave_date', "Current Leave"),
-                ('from_last_leave_date', 'to_last_leave_date', "Last Leave"),
+                # ('from_last_leave_date', 'to_last_leave_date', "Last Leave"),
                 ('from_upcoming_leave_date', 'to_upcoming_leave_date', "Upcoming Leave"),
             ]:
                 from_date = getattr(record, leave_type[0])
@@ -350,7 +358,7 @@ class ResPartnerBank(models.Model):
 
     employee_id = fields.Many2one('hr.employee', string="Employee")
     branch_name = fields.Char("Branch Name")
-    ifsc_code = fields.Char(related='bank_id.bic')
+    ifsc_code = fields.Char(related='bank_id.bic', readonly=False)
 
 
 class ResumeLine(models.Model):

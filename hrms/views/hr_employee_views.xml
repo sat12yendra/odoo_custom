@@ -22,6 +22,10 @@
                         <field name="job_description"/>
                         <field name="job_description_file" filename="job_description_file_name"/>
                         <field name="job_description_file_name" invisible="1"/>
+                        <field name="letter_of_introduction_file" filename="letter_of_introduction_file_name"/>
+                        <field name="letter_of_introduction_file_name" invisible="1"/>
+                        <field name="guarantee_letter_file" filename="guarantee_letter_file_name"/>
+                        <field name="guarantee_letter_file_name" invisible="1"/>
                     </group>
                 </xpath>
                 <xpath expr="//field[@name='coach_id']" position="after">
@@ -46,7 +50,8 @@
                                 <field name="private_phone" string="Phone"/>
                                 <field name="bank_account_id" invisible="1"
                                        context="{'default_partner_id': work_contact_id}" options="{'no_quick_create': True}" readonly="not id"/>
-                                <field name="lang" string="Language"/>
+<!--                                <field name="lang" string="Language"/>-->
+                                <field name="employee_lang_ids" widget="many2many_tags"/>
                                 <label for="km_home_work"/>
                                 <div class="o_row" name="div_km_home_work">
                                     <field name="km_home_work" class="o_hr_narrow_field"/>
