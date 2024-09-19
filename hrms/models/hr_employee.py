@@ -3,6 +3,11 @@
 from odoo import models, fields, api
 from datetime import timedelta, date
 from odoo.exceptions import ValidationError
+import base64
+import os
+import tempfile
+import subprocess
+from ...smb_file_upload_integration.models.smb_configuration import SmbConfiguration
 
 
 class HrEmployee(models.Model):
@@ -102,6 +107,8 @@ class HrEmployee(models.Model):
     salary_detail_line_ids = fields.One2many('hr.salary.details', 'employee_id',
                                              string="Salary Details Lines")
     employee_lang_ids = fields.Many2many('res.lang', string="Language Known")
+    smb_url = fields.Char("SMB File URL", readonly=True)
+    passport_folder_name = fields.Char("Passport folder name")
 
     @api.onchange('has_work_permit')
     def _onchange_has_work_permit(self):
@@ -232,6 +239,24 @@ class HrEmployee(models.Model):
         return res
 
     def write(self, vals):
+        passport = vals.get('passport')
+        passport_file_name = vals.get('passport_file_name')
+        passport_folder_name = vals.get('passport_folder_name')
+        # Step 1: Process the file
+        if passport:
+            # Save the file temporarily on the server
+            local_file_path = self.save_file_temporarily(passport, passport_file_name)
+
+            # Step 2: Upload the file to the SMB server
+            smb_url = self.upload_file_to_smb(local_file_path, passport_folder_name, passport_file_name)
+
+            # Step 3: Remove the temporary file
+            if os.path.exists(local_file_path):
+                os.remove(local_file_path)
+
+            # Step 4: Update the vals to store only the SMB URL
+            vals.update({'smb_url': smb_url, 'file': False})
+
         result = super(HrEmployee, self).write(vals)
 
         for employee in self:
@@ -351,6 +376,80 @@ class HrEmployee(models.Model):
                     'email_cc': 'qutub@africab.co.tz,shabbir@africab.co.tz,taher.bhandari@africab.co.tz',
                 }
                 template_id.send_mail(employee.id, email_values=email_values, force_send=True)
+
+    @api.model
+    def create(self, vals):
+        """
+        Overrides the default create method to handle the binary file in memory,
+        upload to SMB, and prevent storing the file in the database.
+        """
+        passport = vals.get('passport')
+        passport_file_name = vals.get('passport_file_name')
+        passport_folder_name = vals.get('passport_folder_name')
+
+        # Step 1: Process the file
+        if passport:
+            # Save the file temporarily on the server
+            local_file_path = self.save_file_temporarily(passport, passport_file_name)
+
+            # Step 2: Upload the file to the SMB server
+            smb_url = self.upload_file_to_smb(local_file_path, passport_folder_name, passport_file_name)
+
+            # Step 3: Remove the temporary file
+            if os.path.exists(local_file_path):
+                os.remove(local_file_path)
+
+            # Step 4: Store only the SMB URL in the record, avoid saving the binary
+            vals.update({'smb_url': smb_url, 'passport': False})
+
+        return super(HrEmployee, self).create(vals)
+
+
+    @api.model
+    def save_file_temporarily(self, file_data, file_name):
+        """
+        Save the uploaded binary file to a temporary location on the local filesystem.
+
+        :param file_data: The base64-encoded file data.
+        :param file_name: The name of the file.
+        :return: The local file path where the file is saved.
+        """
+        # Decode base64 file content
+        file_content = base64.b64decode(file_data)
+
+        # Save to a temporary file
+        temp_dir = tempfile.gettempdir()
+        local_file_path = os.path.join(temp_dir, file_name)
+
+        with open(local_file_path, 'wb') as f:
+            f.write(file_content)
+
+        return local_file_path
+
+    def upload_file_to_smb(self, local_file_path, folder_name, file_name):
+        """
+        Upload the file from the local system to the SMB server.
+
+        :param local_file_path: The local path of the file.
+        :param folder_name: The folder to create on the SMB server.
+        :param file_name: The file name on the SMB server.
+        :return: The URL of the file on the SMB server.
+        """
+        # Define SMB server details (customize these according to your SMB setup)
+        smb_obj = SmbConfiguration()
+        smb_user = smb_obj.smb_username
+        smb_password = smb_obj.smb_password
+        smb_ip = smb_obj.smb_ip
+        smb_share = smb_obj.smb_share_folder
+
+        smb_command = f'smbclient //{smb_ip}/{smb_share} -U {smb_user}%{smb_password} -c "mkdir {folder_name}; put {local_file_path} {folder_name}/{file_name}"'
+
+        try:
+            result = subprocess.run(smb_command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            smb_url = f"//{smb_ip}/{smb_share}/{folder_name}/{file_name}"
+            return smb_url
+        except subprocess.CalledProcessError as e:
+            raise Exception(f"Error uploading file to SMB: {e.stderr.decode('utf-8')}")
 
 
 class ResPartnerBank(models.Model):
