@@ -102,6 +102,7 @@ class HrEmployee(models.Model):
     salary_detail_line_ids = fields.One2many('hr.salary.details', 'employee_id',
                                              string="Salary Details Lines")
     employee_lang_ids = fields.Many2many('res.lang', string="Language Known")
+    date_of_joining = fields.Date("Date of Joining")
 
     @api.onchange('has_work_permit')
     def _onchange_has_work_permit(self):
