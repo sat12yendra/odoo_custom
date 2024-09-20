@@ -3,8 +3,9 @@
 from odoo import models, fields, api
 
 
-class CreateKpi(models.Model):
+class CreateTask(models.Model):
     _name = 'employee.task'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Employee Create Task'
 
     employee_work_performance_id = fields.Many2one('employee.work.performance',
@@ -20,5 +21,17 @@ class CreateKpi(models.Model):
         ('2', '2'),
         ('3', '3'),
         ('4', '4'),
-        ('5', '5')], 'Rating',
-        copy=False, required=True)
+        ('5', '5'),
+        ('6', '6'),
+        ('7', '7'),
+        ('8', '8'),
+        ('9', '9'),
+        ('10', '10'),
+    ], 'Rating',
+        copy=False)
+    display_type = fields.Selection(
+        selection=[
+            ('line_section', "Section"),
+            ('line_note', "Note"),
+        ],
+        default=False)

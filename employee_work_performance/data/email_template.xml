@@ -28,27 +28,70 @@
         </record>
 
         <record id="email_template_send_task" model="mail.template">
-            <field name="name">Send Employee Task</field>
-            <field name="model_id" ref="employee_work_performance.model_employee_work_performance"/>
-            <field name="subject">Task Assigned to You</field>
-            <field name="email_from"> </field>
-            <field name="email_to"> </field>
-            <field name="email_cc"> </field>
-            <field name="body_html" type="html">
-                <p>Hello <t t-esc="object.employee_id.name or ''"/>,</p><br> </br>
-                <p>Please take a look at the task assigned to you below... Could you please close this task as TAT has given it?</p>
-                <t t-set="i" t-value="1" />
+    <field name="name">Send Employee Task</field>
+    <field name="model_id" ref="employee_work_performance.model_employee_work_performance"/>
+    <field name="subject">Task Assigned to You</field>
+    <field name="email_from"> </field>
+    <field name="email_to"> </field>
+    <field name="email_cc"> </field>
+    <field name="body_html" type="html">
+        <p>Hello <t t-esc="object.employee_id.name or ''"/>,</p>
+        <br/>
+        <p>Please take a look at the task assigned to you below. Could you please close this task as the TAT has been given?</p>
+
+        <t t-set="i" t-value="1" />
+        <!-- Task Table -->
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #f0f0f0;">
+                    <th style="width: 70%; text-align: left; padding: 5px;">Task</th>
+                    <th style="width: 30%; text-align: left; padding: 5px;">TAT</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Iterate through the One2many employee_task_ids field -->
                 <t t-foreach="object.employee_task_ids" t-as="task">
-                    <p><span t-esc="i"/>. <span t-field="task.name"/> TAT <t t-esc="task.task_completed_date and task.task_completed_date.strftime('%d %B %Y') or ''"/></p>
-                    <t t-set="i" t-value="i+1"/>
+                    <!-- Check if the task is a section (Main Task) -->
+                    <t t-if="task.display_type == 'line_section'">
+                        <tr>
+                            <td colspan="2" style="padding: 5px;">
+                                <h3>* <span t-esc="task.name"/></h3>
+                            </td>
+                        </tr>
+                    </t>
+                    <!-- Check if the task is a note -->
+                    <t t-elif="task.display_type == 'line_note'">
+                        <tr>
+                            <td colspan="2" style="padding: 5px;">
+                                <p><i><span t-esc="task.name"/></i></p>
+                            </td>
+                        </tr>
+                    </t>
+                    <!-- If it's a regular sub-task, indent it -->
+                    <t t-else="">
+                        <tr>
+                            <td style="padding: 5px; padding-left: 20px;">
+                                <span t-esc="i"/>. <span t-field="task.name"/>
+                            </td>
+                            <td style="padding: 5px;">
+                                <t t-esc="task.task_completed_date and task.task_completed_date.strftime('%d %B %Y') or 'Pending'"/>
+                            </td>
+                        </tr>
+                        <t t-set="i" t-value="i + 1"/>
+                    </t>
                 </t>
-                <br> </br><br> </br>
-                <p>Africab Group<br> </br>
-                Human Resource Department<br> </br>
-                Dar Es Salaam, Tanzania<br> </br>
-                Email:hr@africab.com</p>
-            </field>
-        </record>
+            </tbody>
+        </table>
+
+        <br/><br/>
+        <p>Africab Group<br/>
+        Human Resource Department<br/>
+        Dar Es Salaam, Tanzania<br/>
+        Email: hr@africab.com</p>
+    </field>
+</record>
+
+
 
         <record id="email_template_send_behaviour" model="mail.template">
             <field name="name">Send Employee Behaviour</field>
