@@ -7,8 +7,6 @@ import base64
 import os
 import tempfile
 import subprocess
-from ...smb_file_upload_integration.models.smb_configuration import SmbConfiguration
-
 
 class HrEmployee(models.Model):
     _inherit = 'hr.employee'
@@ -436,11 +434,11 @@ class HrEmployee(models.Model):
         :return: The URL of the file on the SMB server.
         """
         # Define SMB server details (customize these according to your SMB setup)
-        smb_obj = SmbConfiguration()
-        smb_user = smb_obj.smb_username
-        smb_password = smb_obj.smb_password
-        smb_ip = smb_obj.smb_ip
-        smb_share = smb_obj.smb_share_folder
+        smv_config = self.env['smb.configuration'].search([])
+        smb_user = smv_config.smb_username
+        smb_password = smv_config.smb_password
+        smb_ip = smv_config.smb_ip
+        smb_share = smv_config.smb_share_folder
 
         smb_command = f'smbclient //{smb_ip}/{smb_share} -U {smb_user}%{smb_password} -c "mkdir {folder_name}; put {local_file_path} {folder_name}/{file_name}"'
 
