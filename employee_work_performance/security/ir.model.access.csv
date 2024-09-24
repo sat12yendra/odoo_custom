@@ -11,6 +11,9 @@ access_employee_kpi_hod,employee.kpi.hod,model_employee_kpi,hrms.group_hr_hod,1,
 access_employee_task_manager,employee.task.manager,model_employee_task,hrms.group_hr_user_manager,1,1,1,1
 access_employee_task_hod,employee.task.hod,model_employee_task,hrms.group_hr_hod,1,1,1,1
 
+access_employee_subtask_line_manager,employee.subtask.line.manager,model_employee_subtask_line,hrms.group_hr_user_manager,1,1,1,1
+access_employee_subtask_line_hod,employee.subtask.line.hod,model_employee_subtask_line,hrms.group_hr_hod,1,1,1,1
+
 access_employee_behaviour_manager,employee.behaviour.manager,model_employee_behaviour,hrms.group_hr_user_manager,1,1,1,1
 access_employee_behaviour_hod,employee.behaviour.hod,model_employee_behaviour,hrms.group_hr_hod,1,1,1,1
 

@@ -36,33 +36,35 @@
                                 <button name="action_send_kpi_mail" type="object" string="Send KPI Email" class="btn-primary"/>
                             </page>
                             <page name="employee_task" string="Employee Task">
-                                <field name="employee_task_ids" string="" widget="section_and_note_one2many" mode="tree">
-                                    <tree editable="bottom">
-                                        <control>
-                                            <create name="add_section_control" string="Add a task" context="{'default_display_type':
-                                                     'line_section'}"/>
-                                            <create name="add_line_control" string="Add a subtask"/>
-                                            <create name="add_note_control" string="Add a note" context="{'default_display_type': 'line_note'}"/>
-                                        </control>
-                                        <field name="name" required="not display_type"
-                                               widget="section_and_note_text" optional="show"/>
+                                <field name="employee_task_ids" string="">
+                                    <tree>
+                                        <field name="name" required="1"/>
                                         <field name="task_create_date"/>
                                         <field name="task_assign_date"/>
                                         <field name="task_completed_date"/>
-                                        <field name="rating" widget="priority" required="not display_type"/>
+                                        <field name="rating" widget="priority" />
                                         <field name="remarks"/>
-                                        <field name="display_type" column_invisible="1"/>
                                     </tree>
                                     <form>
                                         <group>
-                                            <field name="name" required="not display_type"
-                                               widget="section_and_note_text" optional="show"/>
+                                            <field name="name" required="1"/>
                                             <field name="task_create_date"/>
                                             <field name="task_assign_date"/>
                                             <field name="task_completed_date"/>
-                                            <field name="rating" widget="priority" required="not display_type"/>
+                                            <field name="rating" widget="priority" />
                                             <field name="remarks"/>
-                                            <field name="display_type" invisible="1"/>
+                                        </group>
+                                        <group string="Employee SubTask">
+                                            <field name="sub_task_line_ids" string="">
+                                                <tree editable="bottom">
+                                                    <field name="name" required="1"/>
+                                                    <field name="task_create_date"/>
+                                                    <field name="task_assign_date"/>
+                                                    <field name="task_completed_date"/>
+                                                    <field name="rating" widget="priority" />
+                                                    <field name="remarks"/>
+                                                </tree>
+                                            </field>
                                         </group>
                                     </form>
                                 </field>

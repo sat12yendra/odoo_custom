@@ -25,12 +25,12 @@ Long description of module's purpose
     'data': [
         'security/core_security.xml',
         'security/ir.model.access.csv',
-        # 'views/core_view.xml',
         'views/core_menu.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',
     ],
+
 }
 
