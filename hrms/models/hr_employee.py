@@ -254,7 +254,7 @@ class HrEmployee(models.Model):
                 os.remove(local_file_path)
 
             # Step 4: Update the vals to store only the SMB URL
-            vals.update({'smb_url': smb_url, 'file': False})
+            vals.update({'smb_url': smb_url, 'passport': False})
 
         result = super(HrEmployee, self).write(vals)
 
