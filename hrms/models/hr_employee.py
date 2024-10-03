@@ -104,6 +104,16 @@ class HrEmployee(models.Model):
     employee_lang_ids = fields.Many2many('res.lang', string="Language Known")
     date_of_joining = fields.Date("Date of Joining")
 
+    appr_remarks = fields.Text("Remarks")
+    appr_appraisal_last_date = fields.Date(string="Appraisal last Date")
+    appr_appraisal_last_amount = fields.Float(string="Appraisal Last Amount")
+    appr_offer_letter = fields.Binary("Offer Letter")
+    appr_offer_letter_file_name = fields.Char()
+    appr_government_contract_file = fields.Binary("Government Contract File")
+    appr_government_contract_file_name = fields.Char()
+    appr_experience_letter = fields.Binary("Experience Letter")
+    appr_experience_letter_file_name = fields.Char()
+
     @api.onchange('has_work_permit')
     def _onchange_has_work_permit(self):
         return self._check_file_size('has_work_permit', 'Work Permit')
