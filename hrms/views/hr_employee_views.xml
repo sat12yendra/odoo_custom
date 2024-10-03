@@ -93,7 +93,7 @@
                                 <field name="identification_id"/>
                                 <field name="ssnid"/>
                                 <field name="passport_id"/>
-                                <field name="passport" filename="passport_file_name"/>
+                                <field name="passport" filename="passport_file_name" widget="url"/>
                                 <field name="passport_folder_name"/>
                                 <field name="passport_exp_date"/>
                                 <field name="passport_taken_date"/>
