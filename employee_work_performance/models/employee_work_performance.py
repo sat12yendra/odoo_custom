@@ -24,8 +24,8 @@ class EmployeeWorkPerformance(models.Model):
     year_of_kpi = fields.Char("Year of KPI", readonly=True, tracking=True)
     employee_kpi_ids = fields.One2many('employee.kpi',
                                      'employee_work_performance_id', string="Employee KPI")
-    employee_task_ids = fields.One2many('employee.task',
-                                             'employee_work_performance_id', string="Employee behaviour")
+    employee_task_ids = fields.One2many('employee.task','employee_work_performance_id',
+                                        auto_join=True, tring="Employee behaviour")
     employee_behaviour_ids = fields.One2many('employee.behaviour',
                                      'employee_work_performance_id', string="Employee behaviour")
     employee_innovation_ids = fields.One2many('employee.innovation',
@@ -68,9 +68,9 @@ class EmployeeWorkPerformance(models.Model):
         template_id = self.env.ref('employee_work_performance.email_template_send_task')
         if template_id:
             email_values = {
-                'email_from': 'hr@africab.com',
+                'email_from': self.employee_id.parent_id.work_email if self.employee_id.parent_id else '',
                 'email_to': self.employee_id.work_email,
-                'email_cc': self.employee_id.parent_id.work_email
+                'email_cc': self.employee_id.parent_id.work_email if self.employee_id.parent_id else ''
             }
             template_id.send_mail(self.id, email_values=email_values, force_send=True)
 

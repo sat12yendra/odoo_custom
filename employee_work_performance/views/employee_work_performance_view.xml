@@ -36,21 +36,43 @@
                                 <button name="action_send_kpi_mail" type="object" string="Send KPI Email" class="btn-primary"/>
                             </page>
                             <page name="employee_task" string="Employee Task">
-                                <group>
-                                    <field name="employee_task_ids" string="">
-                                        <tree editable="bottom">
+                                <field name="employee_task_ids" string="">
+                                    <tree>
+                                        <field name="name" required="1"/>
+                                        <field name="task_create_date"/>
+                                        <field name="task_assign_date"/>
+                                        <field name="task_completed_date"/>
+                                        <field name="rating" widget="priority" />
+                                        <field name="remarks"/>
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <field name="name" required="1"/>
                                             <field name="task_create_date"/>
                                             <field name="task_assign_date"/>
                                             <field name="task_completed_date"/>
-                                            <field name="rating" widget="priority"/>
+                                            <field name="rating" widget="priority" />
                                             <field name="remarks"/>
-                                            <field name="name"/>
-                                        </tree>
-                                    </field>
-                                </group>
-                                <button name="action_send_task_mail" type="object" string="Send Task Email" class="btn-primary"/>
+                                        </group>
+                                        <group string="Employee SubTask">
+                                            <field name="sub_task_line_ids" string="">
+                                                <tree editable="bottom">
+                                                    <field name="name" required="1"/>
+                                                    <field name="task_create_date"/>
+                                                    <field name="task_assign_date"/>
+                                                    <field name="task_completed_date"/>
+                                                    <field name="rating" widget="priority" />
+                                                    <field name="remarks"/>
+                                                </tree>
+                                            </field>
+                                        </group>
+                                    </form>
+                                </field>
+                                <div>
+                                    <button name="action_send_task_mail" type="object" string="Send Task Email" class="btn-primary"/>
+                                </div>
                             </page>
-                            <page name="employee_behaviour" string="Employee Behaviour">
+                            <page name="employee_behaviour" string="Employee Behaviour" groups="hrms.group_hr_hod">
                                 <group>
                                     <field name="employee_behaviour_ids" string="">
                                         <tree editable="bottom">
@@ -62,7 +84,7 @@
                                 </group>
                                 <button name="action_send_behaviour_mail" type="object" string="Send Behaviour Email" class="btn-primary"/>
                             </page>
-                            <page name="employee_innovation" string="Employee Innovation">
+                            <page name="employee_innovation" string="Employee Innovation" invisible="1">
                                 <group>
                                     <field name="employee_innovation_ids" string="">
                                         <tree editable="bottom">

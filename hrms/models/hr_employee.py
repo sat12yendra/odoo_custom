@@ -107,6 +107,7 @@ class HrEmployee(models.Model):
     employee_lang_ids = fields.Many2many('res.lang', string="Language Known")
     smb_url = fields.Char("SMB File URL", readonly=True)
     passport_folder_name = fields.Char("Passport folder name")
+    date_of_joining = fields.Date("Date of Joining")
 
     @api.onchange('has_work_permit')
     def _onchange_has_work_permit(self):

@@ -35,18 +35,61 @@
             <field name="email_to"> </field>
             <field name="email_cc"> </field>
             <field name="body_html" type="html">
-                <p>Hello <t t-esc="object.employee_id.name or ''"/>,</p><br> </br>
-                <p>Please take a look at the task assigned to you below... Could you please close this task as TAT has given it?</p>
+                <p>Hello <t t-esc="object.employee_id.name or ''"/>,</p>
+                <br/>
+                <p>Please take a look at the task assigned to you below. Could you please close this task as the TAT has been given?</p>
+
                 <t t-set="i" t-value="1" />
-                <t t-foreach="object.employee_task_ids" t-as="task">
-                    <p><span t-esc="i"/>. <span t-field="task.name"/> TAT <t t-esc="task.task_completed_date and task.task_completed_date.strftime('%d %B %Y') or ''"/></p>
-                    <t t-set="i" t-value="i+1"/>
-                </t>
-                <br> </br><br> </br>
-                <p>Africab Group<br> </br>
-                Human Resource Department<br> </br>
-                Dar Es Salaam, Tanzania<br> </br>
-                Email:hr@africab.com</p>
+                <!-- Task Table -->
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background-color: #f0f0f0;">
+                            <th style="width: 70%; text-align: left; padding: 5px;">Task</th>
+                            <th style="width: 30%; text-align: left; padding: 5px;">TAT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Iterate through the One2many employee_task_ids field (Main Tasks) -->
+                        <t t-foreach="object.employee_task_ids" t-as="main_task">
+                            <!-- Display Main Task -->
+                            <tr>
+                                <td style="padding: 5px;">
+                                    <!-- Main Task Sequence Number -->
+                                    <span t-esc="i"/>. <span t-esc="main_task.name"/>
+                                </td>
+                                <td style="padding: 5px;">
+                                    <!-- Main Task TAT -->
+                                    <t t-esc="main_task.task_completed_date and main_task.task_completed_date.strftime('%d %B %Y') or 'Pending'"/>
+                                </td>
+                            </tr>
+
+                            <!-- Iterate through sub_task_line_ids (Sub-Tasks under each Main Task) -->
+                            <t t-set="j" t-value="1" />
+                            <t t-foreach="main_task.sub_task_line_ids" t-as="sub_task">
+                                <tr>
+                                    <td style="padding: 5px; padding-left: 20px;">
+                                        <!-- Sub Task Sequence Number -->
+                                        <span t-esc="i"/>.<span t-esc="j"/> <span t-esc="sub_task.name"/>
+                                    </td>
+                                    <td style="padding: 5px;">
+                                        <!-- Sub Task TAT -->
+                                        <t t-esc="sub_task.task_completed_date and sub_task.task_completed_date.strftime('%d %B %Y') or 'Pending'"/>
+                                    </td>
+                                </tr>
+                                <t t-set="j" t-value="j + 1"/>
+                            </t>
+
+                            <!-- Increment the Main Task index after processing each main task -->
+                            <t t-set="i" t-value="i + 1"/>
+                        </t>
+                    </tbody>
+                </table>
+
+                <br/><br/>
+                <p>Africab Group<br/>
+                Human Resource Department<br/>
+                Dar Es Salaam, Tanzania<br/>
+                Email: hr@africab.com</p>
             </field>
         </record>
 
