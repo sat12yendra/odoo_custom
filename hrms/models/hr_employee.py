@@ -148,7 +148,7 @@ class HrEmployee(models.Model):
         file_content = getattr(self, field_name)
         if file_content:
             file_size = len(file_content)
-            if file_size > 1024 * 1024:
+            if file_size > 1.5 * 1024 * 1024:
                 setattr(self, field_name, False)
                 return {
                     'warning': {
@@ -377,7 +377,7 @@ class ResumeLine(models.Model):
         file_content = getattr(self, field_name)
         if file_content:
             file_size = len(file_content)
-            if file_size > 1024 * 1024:
+            if file_size > 1.5 * 1024 * 1024:
                 setattr(self, field_name, False)
                 return {
                     'warning': {
@@ -418,7 +418,7 @@ class EmployeeEducationDetails(models.Model):
         file_content = getattr(self, field_name)
         if file_content:
             file_size = len(file_content)
-            if file_size > 1024 * 1024:
+            if file_size > 1.5 * 1024 * 1024:
                 setattr(self, field_name, False)
                 return {
                     'warning': {
