@@ -70,10 +70,10 @@ class HrEmployee(models.Model):
 
     offer_letter = fields.Binary("Offer Letter")
     offer_letter_file_name = fields.Char()
-    directors_notes = fields.Binary("Directors Notes")
-    directors_notes_file_name = fields.Char()
-    management_notes = fields.Binary("Management Notes")
-    management_notes_file_name = fields.Char()
+    government_contract_file = fields.Binary("Government Contract File")
+    government_contract_file_name = fields.Char()
+    experience_letter = fields.Binary("Experience Letter")
+    experience_letter_file_name = fields.Char()
 
     permit_position = fields.Char("Permit Position")
     community = fields.Selection([('HINDU', 'HINDU'), ('MUSLIM', 'MUSLIM'), ('BOHRA', 'BOHRA'),
@@ -157,13 +157,13 @@ class HrEmployee(models.Model):
     def _onchange_offer_letter(self):
         return self._check_file_size('offer_letter', 'Offer Letter')
 
-    @api.onchange('directors_notes')
-    def _onchange_directors_notes(self):
-        return self._check_file_size('directors_notes', 'Directors Notes')
+    @api.onchange('government_contract_file')
+    def _onchange_government_contract_file(self):
+        return self._check_file_size('government_contract_file', 'Government Contract File')
 
-    @api.onchange('management_notes')
-    def _onchange_management_notes(self):
-        return self._check_file_size('management_notes', 'Management Notes')
+    @api.onchange('experience_letter')
+    def _onchange_experience_letter(self):
+        return self._check_file_size('experience_letter', 'Experience Letter')
 
     @api.onchange('job_description_file')
     def _onchange_job_description_file(self):
