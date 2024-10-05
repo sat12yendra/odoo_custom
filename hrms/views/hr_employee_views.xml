@@ -236,10 +236,10 @@
                             <group>
                                 <field name="appr_offer_letter"
                                            filename="appr_offer_letter_file_name"/>
-                                <field name="appr_experience_letter" filename="appr_experience_letter_file_name"/>
-                                <field name="appr_government_contract_file" filename="appr_government_contract_file_name"/>
-                                <field name="appr_experience_letter_file_name" invisible="1"/>
-                                <field name="appr_government_contract_file_name" invisible="1"/>
+                                <field name="appr_management_note_file" filename="appr_management_note_file_name"/>
+                                <field name="appr_directors_note_file" filename="appr_directors_note_file_name"/>
+                                <field name="appr_management_note_file_name" invisible="1"/>
+                                <field name="appr_directors_note_file_name" invisible="1"/>
                                 <field name="appr_offer_letter_file_name" invisible="1"/>
                             </group>
                         </group>

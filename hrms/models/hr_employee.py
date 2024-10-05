@@ -112,10 +112,10 @@ class HrEmployee(models.Model):
     appr_appraisal_last_amount = fields.Float(string="Appraisal Last Amount")
     appr_offer_letter = fields.Binary("Offer Letter")
     appr_offer_letter_file_name = fields.Char()
-    appr_government_contract_file = fields.Binary("Government Contract File")
-    appr_government_contract_file_name = fields.Char()
-    appr_experience_letter = fields.Binary("Experience Letter")
-    appr_experience_letter_file_name = fields.Char()
+    appr_management_note_file = fields.Binary("Management Notes")
+    appr_management_note_file_name = fields.Char()
+    appr_directors_note_file = fields.Binary("Directors Notes")
+    appr_directors_note_file_name = fields.Char()
 
     @api.onchange('appr_offer_letter')
     def _onchange_appr_offer_letter(self):
