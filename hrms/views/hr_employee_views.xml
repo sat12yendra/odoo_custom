@@ -224,6 +224,26 @@
                             <field  colspan="2" name="salary_admin_note" nolabel="1" placeholder="Admin Note..."/>
                         </group>
                     </page>
+                    <page string="APPR Settings" name="appr_settings">
+                        <group name="appr_others">
+                            <group>
+                                <field name="appr_remarks" />
+                            </group>
+                            <group>
+                                <field name="appr_appraisal_last_date" />
+                                <field name="appr_appraisal_last_amount" />
+                            </group>
+                            <group>
+                                <field name="appr_offer_letter"
+                                           filename="appr_offer_letter_file_name"/>
+                                <field name="appr_experience_letter" filename="appr_experience_letter_file_name"/>
+                                <field name="appr_government_contract_file" filename="appr_government_contract_file_name"/>
+                                <field name="appr_experience_letter_file_name" invisible="1"/>
+                                <field name="appr_government_contract_file_name" invisible="1"/>
+                                <field name="appr_offer_letter_file_name" invisible="1"/>
+                            </group>
+                        </group>
+                    </page>
                 </xpath>
             </field>
         </record>
