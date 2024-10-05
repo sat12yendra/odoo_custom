@@ -156,10 +156,10 @@
                         <group>
                             <field name="offer_letter"
                                        filename="offer_letter_file_name"/>
-                            <field name="experience_letter" filename="experience_letter_file_name"/>
-                            <field name="government_contract_file" filename="government_contract_file_name"/>
-                            <field name="experience_letter_file_name" invisible="1"/>
-                            <field name="government_contract_file_name" invisible="1"/>
+                            <field name="management_notes" filename="management_notes_file_name"/>
+                            <field name="directors_notes" filename="directors_notes_file_name"/>
+                            <field name="management_notes_file_name" invisible="1"/>
+                            <field name="directors_notes_file_name" invisible="1"/>
                             <field name="offer_letter_file_name" invisible="1"/>
                         </group>
                     </group>

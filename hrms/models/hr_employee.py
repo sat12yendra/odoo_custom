@@ -49,28 +49,31 @@ class HrEmployee(models.Model):
     passport_taken_date = fields.Date(string="Passport Taken Date")
     passport_collect_date = fields.Date(string="Passport Collect Date")
 
-    from_current_leave_date = fields.Date(string="From Current Leave Date")
-    to_current_leave_date = fields.Date(string="To Current Leave Date")
-    total_current_days = fields.Integer("Total Current Days", compute="_compute_days", store=True)
+    from_current_leave_date = fields.Date(string="From Current Leave Date", tracking=True)
+    to_current_leave_date = fields.Date(string="To Current Leave Date", tracking=True)
+    total_current_days = fields.Integer("Total Current Days", compute="_compute_days",
+                                        store=True, tracking=True)
 
-    from_last_leave_date = fields.Date(string="From Last Leave Date")
-    to_last_leave_date = fields.Date(string="To Last Leave Date")
-    total_last_days = fields.Integer("Total Last Days", compute="_compute_days", store=True)
+    from_last_leave_date = fields.Date(string="From Last Leave Date", tracking=True)
+    to_last_leave_date = fields.Date(string="To Last Leave Date", tracking=True)
+    total_last_days = fields.Integer("Total Last Days",
+                                     compute="_compute_days", store=True, tracking=True)
 
-    from_upcoming_leave_date = fields.Date(string="From Upcoming Leave Date")
-    to_upcoming_leave_date = fields.Date(string="To Upcoming Leave Date")
-    total_upcoming_days = fields.Integer("Total Upcoming Days", compute="_compute_days", store=True)
+    from_upcoming_leave_date = fields.Date(string="From Upcoming Leave Date", tracking=True)
+    to_upcoming_leave_date = fields.Date(string="To Upcoming Leave Date", tracking=True)
+    total_upcoming_days = fields.Integer("Total Upcoming Days",
+                                         compute="_compute_days", store=True, tracking=True)
 
     remarks = fields.Text("Remarks")
-    appraisal_last_date = fields.Date(string="Appraisal last Date")
-    appraisal_last_amount = fields.Float(string="Appraisal Last Amount")
+    appraisal_last_date = fields.Date(string="Appraisal last Date", tracking=True)
+    appraisal_last_amount = fields.Float(string="Appraisal Last Amount", tracking=True)
 
     offer_letter = fields.Binary("Offer Letter")
     offer_letter_file_name = fields.Char()
-    government_contract_file = fields.Binary("Government Contract File")
-    government_contract_file_name = fields.Char()
-    experience_letter = fields.Binary("Experience Letter")
-    experience_letter_file_name = fields.Char()
+    directors_notes = fields.Binary("Directors Notes")
+    directors_notes_file_name = fields.Char()
+    management_notes = fields.Binary("Management Notes")
+    management_notes_file_name = fields.Char()
 
     permit_position = fields.Char("Permit Position")
     community = fields.Selection([('HINDU', 'HINDU'), ('MUSLIM', 'MUSLIM'), ('BOHRA', 'BOHRA'),
@@ -114,6 +117,18 @@ class HrEmployee(models.Model):
     appr_experience_letter = fields.Binary("Experience Letter")
     appr_experience_letter_file_name = fields.Char()
 
+    @api.onchange('appr_offer_letter')
+    def _onchange_appr_offer_letter(self):
+        return self._check_file_size('appr_offer_letter', 'Offer Letter')
+
+    @api.onchange('appr_government_contract_file')
+    def _onchange_appr_government_contract_file(self):
+        return self._check_file_size('appr_government_contract_file', 'Government Contract File')
+
+    @api.onchange('appr_experience_letter')
+    def _onchange_appr_experience_letter(self):
+        return self._check_file_size('appr_experience_letter', 'Experience Letter')
+
     @api.onchange('has_work_permit')
     def _onchange_has_work_permit(self):
         return self._check_file_size('has_work_permit', 'Work Permit')
@@ -142,13 +157,13 @@ class HrEmployee(models.Model):
     def _onchange_offer_letter(self):
         return self._check_file_size('offer_letter', 'Offer Letter')
 
-    @api.onchange('government_contract_file')
-    def _onchange_government_contract_file(self):
-        return self._check_file_size('government_contract_file', 'Government Contract File')
+    @api.onchange('directors_notes')
+    def _onchange_directors_notes(self):
+        return self._check_file_size('directors_notes', 'Directors Notes')
 
-    @api.onchange('experience_letter')
-    def _onchange_experience_letter(self):
-        return self._check_file_size('experience_letter', 'Experience Letter')
+    @api.onchange('management_notes')
+    def _onchange_management_notes(self):
+        return self._check_file_size('management_notes', 'Management Notes')
 
     @api.onchange('job_description_file')
     def _onchange_job_description_file(self):

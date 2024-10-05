@@ -1,0 +1,60 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="africab_recruitment.list">
+      <field name="name">africab_recruitment list</field>
+      <field name="model">africab_recruitment.africab_recruitment</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="africab_recruitment.action_window">
+      <field name="name">africab_recruitment window</field>
+      <field name="res_model">africab_recruitment.africab_recruitment</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="africab_recruitment.action_server">
+      <field name="name">africab_recruitment server</field>
+      <field name="model_id" ref="model_africab_recruitment_africab_recruitment"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="africab_recruitment" id="africab_recruitment.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="africab_recruitment.menu_1" parent="africab_recruitment.menu_root"/>
+    <menuitem name="Menu 2" id="africab_recruitment.menu_2" parent="africab_recruitment.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="africab_recruitment.menu_1_list" parent="africab_recruitment.menu_1"
+              action="africab_recruitment.action_window"/>
+    <menuitem name="Server to list" id="africab_recruitment" parent="africab_recruitment.menu_2"
+              action="africab_recruitment.action_server"/>
+-->
+  </data>
+</odoo>
