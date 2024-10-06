@@ -16,10 +16,17 @@
             sequence="1"/>
 
         <menuitem
+            id="menu_employee_task_dashboard"
+            name="Employee Task Dashboard"
+            action="action_employee_task"
+            parent="menu_root_employee_work_performance"
+            sequence="2"/>
+
+        <menuitem
             id="menu_employee_work_performance_configuration"
             name="Configuration"
             parent="menu_root_employee_work_performance"
-            sequence="2"/>
+            sequence="3"/>
 
         <menuitem
             id="menu_create_behaviour"

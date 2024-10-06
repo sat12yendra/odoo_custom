@@ -12,14 +12,20 @@
                             <group>
                                 <field name="employee_id" widget="many2one_avatar_user" required="1"
                                        options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
-                                <field name="job_id"/>
                                 <field name="date"/>
-                                <field name="permit_position"/>
+                                <field name="kpi_reviewer_ids" widget="many2many_tags"
+                                       options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
+                                <field name="task_reviewer_ids" widget="many2many_tags"
+                                       options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
+                                <field name="behaviour_reviewer_ids" widget="many2many_tags"
+                                       options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
                             </group>
                             <group>
                                 <field name="department_id"/>
-                                <field name="parent_id"/>
                                 <field name="year_of_kpi" force_save="1"/>
+                                <field name="job_id"/>
+                                <field name="parent_id"/>
+                                <field name="permit_position" invisible="1"/>
                             </group>
                         </group>
                         <notebook>
@@ -36,7 +42,7 @@
                                 <button name="action_send_kpi_mail" type="object" string="Send KPI Email" class="btn-primary"/>
                             </page>
                             <page name="employee_task" string="Employee Task">
-                                <field name="employee_task_ids" string="">
+                                <field name="employee_task_ids" string="" widget="one2many_delete">
                                     <tree>
                                         <field name="name" required="1"/>
                                         <field name="task_create_date"/>

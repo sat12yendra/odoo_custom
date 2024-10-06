@@ -18,7 +18,7 @@ Long description of module's purpose
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['hrms', 'africab_core'],
+    'depends': ['hrms', 'africab_core', 'one2many_mass_select_delete'],
 
     # always loaded
     'data': [
@@ -27,6 +27,7 @@ Long description of module's purpose
         'views/behaviour_master_view.xml',
         'views/kpi_master_view.xml',
         'views/employee_work_performance_view.xml',
+        'views/employee_task_view.xml',
         'views/menu.xml',
     ],
     # only loaded in demonstration mode

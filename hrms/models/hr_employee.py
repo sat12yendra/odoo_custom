@@ -117,6 +117,17 @@ class HrEmployee(models.Model):
     appr_directors_note_file = fields.Binary("Directors Notes")
     appr_directors_note_file_name = fields.Char()
 
+    reviewer_ids = fields.Many2many('hr.employee', 'employee_reviewer_rel',
+                                    'reviewer_id', 'employee_id', string="Reviewer")
+
+    @api.onchange('department_id')
+    def _onchange_reviewer_ids(self):
+        for employee in self.filtered('department_id'):
+            if employee.department_id.reviewer_ids:
+                employee.reviewer_ids = [(6, 0, employee.department_id.reviewer_ids.ids)]
+            else:
+                employee.reviewer_ids = [(5, 0, 0)]
+
     @api.onchange('appr_offer_letter')
     def _onchange_appr_offer_letter(self):
         return self._check_file_size('appr_offer_letter', 'Offer Letter')

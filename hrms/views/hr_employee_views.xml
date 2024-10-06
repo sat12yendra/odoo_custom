@@ -13,6 +13,7 @@
                 </xpath>
                 <xpath expr="//field[@name='work_email']" position="after">
                     <field name="nssf_no" />
+                    <field name="currency_id" />
                 </xpath>
                 <xpath expr="//field[@name='job_title']" position="after">
                     <field name="permit_position"  placeholder="Permit Position"/>
@@ -31,7 +32,8 @@
                 <xpath expr="//field[@name='coach_id']" position="after">
                     <field name="tin_no" />
                     <field name="whatsapp_no" />
-                    <field name="currency_id" />
+                    <field name="reviewer_ids" widget="many2many_tags"
+                           options="{'no_open': True, 'no_quick_create': True}" />
                 </xpath>
                 <xpath expr="//page[@name='personal_information']" position="replace">
                     <page name="personal_information" string="Private Information" groups="hr.group_hr_user">

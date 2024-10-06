@@ -22,6 +22,13 @@ class EmployeeWorkPerformance(models.Model):
     parent_id = fields.Many2one(related='employee_id.parent_id', string='Manager', tracking=True)
     date = fields.Date("Date", tracking=True)
     year_of_kpi = fields.Char("Year of KPI", readonly=True, tracking=True)
+    kpi_reviewer_ids = fields.Many2many('hr.employee', 'kpi_reviewer_rel',
+                                    'reviewer_id', 'kpi_id', string="KPI Reviewer")
+    task_reviewer_ids = fields.Many2many('hr.employee', 'task_reviewer_rel',
+                                        'reviewer_id', 'task_id', string="Task Reviewer")
+    behaviour_reviewer_ids = fields.Many2many('hr.employee', 'behaviour_reviewer_rel',
+                                        'reviewer_id', 'behaviour_id', string="Behaviour Reviewer")
+
     employee_kpi_ids = fields.One2many('employee.kpi',
                                      'employee_work_performance_id', string="Employee KPI")
     employee_task_ids = fields.One2many('employee.task','employee_work_performance_id',
@@ -64,15 +71,19 @@ class EmployeeWorkPerformance(models.Model):
             }
             template_id.send_mail(self.id, email_values=email_values, force_send=True)
 
-    def action_send_task_mail(self):
+    def action_send_task_mail(self, selected_ids):
+        print("Callong********************")
+        print("Selected IDs:", selected_ids)  # This will show the selected IDs in the logs
         template_id = self.env.ref('employee_work_performance.email_template_send_task')
-        if template_id:
+        for record_id in selected_ids:
+            record = self.browse(record_id)  # Browse the record based on the ID
             email_values = {
-                'email_from': self.employee_id.parent_id.work_email if self.employee_id.parent_id else '',
-                'email_to': self.employee_id.work_email,
-                'email_cc': self.employee_id.parent_id.work_email if self.employee_id.parent_id else ''
+                'email_from': record.employee_id.parent_id.work_email if record.employee_id.parent_id else '',
+                'email_to': record.employee_id.work_email,
+                'email_cc': record.employee_id.parent_id.work_email if record.employee_id.parent_id else ''
             }
-            template_id.send_mail(self.id, email_values=email_values, force_send=True)
+            if template_id:
+                template_id.send_mail(record.id, email_values=email_values, force_send=True)
 
     def action_send_behaviour_mail(self):
         template_id = self.env.ref('employee_work_performance.email_template_send_behaviour')

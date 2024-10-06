@@ -23,6 +23,7 @@
         'data/hr_salary_data.xml',
         'views/hr_employee_views.xml',
         'views/salary_master_view.xml',
+        'views/hr_department_view.xml',
         'views/menu.xml',
     ],
     # only loaded in demonstration mode

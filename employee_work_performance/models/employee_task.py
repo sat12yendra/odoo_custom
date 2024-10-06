@@ -29,8 +29,23 @@ class CreateTask(models.Model):
         ('10', '10'),
     ], 'Rating',
         copy=False)
+    state = fields.Selection([
+        ('a_new', 'New'),
+        ('assigned', 'Assigned'),
+        ('b_delayed', 'Delayed'),
+        ('completed', 'Completed'),
+    ], string='Task Status', default='a_new')
     sub_task_line_ids = fields.One2many('employee.subtask.line',
                                         'employee_sub_task_id', string="Sub Task Lines")
+
+    def action_done(self):
+        """
+        This is used to make employee task done
+        """
+        self.state = 'completed'
+
+    def hello(self):
+        print("Hello************************")
 
 
 class CreateSubTaskLines(models.Model):
