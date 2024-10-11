@@ -27,7 +27,21 @@ class HrEmployee(models.Model):
             return delta.days + 1  # Include both start and end dates
         return 0
 
-    age = fields.Integer("Age")
+    @api.depends('birthday')
+    def _compute_age(self):
+        for record in self:
+            if record.birthday:
+                today = date.today()
+                # Calculate the difference between today and the birthday
+                age = today.year - record.birthday.year
+                # Adjust age if birthday has not occurred yet this year
+                if (today.month, today.day) < (record.birthday.month, record.birthday.day):
+                    age -= 1
+                record.age = age
+            else:
+                record.age = 0
+
+    age = fields.Integer("Age", compute="_compute_age", store=True)
     nssf_no = fields.Char("NSSF No.")
     tin_no = fields.Char("Tin No.")
     whatsapp_no = fields.Char("WhatsApp No.")
@@ -431,6 +445,7 @@ class EmployeeEducationDetails(models.Model):
     employee_id = fields.Many2one('hr.employee', string="Employee")
     certificate = fields.Selection([
         ('graduate', 'Graduate'),
+        ('diploma', 'Diploma'),
         ('bachelor', 'Bachelor'),
         ('master', 'Master'),
         ('doctor', 'Doctor'),
