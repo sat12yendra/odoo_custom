@@ -3,6 +3,19 @@
 from odoo import models, fields, api
 from datetime import date
 
+rating = [
+        ('1', '1'),
+        ('2', '2'),
+        ('3', '3'),
+        ('4', '4'),
+        ('5', '5'),
+        ('6', '6'),
+        ('7', '7'),
+        ('8', '8'),
+        ('9', '9'),
+        ('10', '10'),
+    ]
+
 
 class CreateTask(models.Model):
     _name = 'employee.task'
@@ -14,23 +27,13 @@ class CreateTask(models.Model):
     name = fields.Char(string="Task")
     task_create_date = fields.Date(string="Task Create Date")
     task_assign_date = fields.Date(string="Task Assign Date")
-    tat_date = fields.Date(string="Task TAT Date")
+    task_tat_date = fields.Date(string="Task TAT Date")
     task_completed_date = fields.Date(string="Task Completed Date")
     remarks = fields.Char(string="Remarks")
-    rating = fields.Selection([
-        ('0', '0'),
-        ('1', '1'),
-        ('2', '2'),
-        ('3', '3'),
-        ('4', '4'),
-        ('5', '5'),
-        ('6', '6'),
-        ('7', '7'),
-        ('8', '8'),
-        ('9', '9'),
-        ('10', '10'),
-    ], 'Rating',
-        copy=False)
+    manager_rating = fields.Selection(rating, 'Manager Rating', copy=False)
+    hod_rating = fields.Selection(rating, 'HOD Rating', copy=False)
+    management_rating = fields.Selection(rating, 'Management Rating',
+                                         copy=False)
     state = fields.Selection([
         ('a_new', 'New'),
         ('assigned', 'Assigned'),
@@ -49,7 +52,7 @@ class CreateTask(models.Model):
     @api.model
     def check_tat_date(self):
         today = date.today()
-        tasks_to_delay = self.search([('tat_date', '<', today), ('state', 'not in', ['a_new', 'b_delayed', 'completed'])])
+        tasks_to_delay = self.search([('task_tat_date', '<', today), ('state', 'not in', ['a_new', 'b_delayed', 'completed'])])
 
         for task in tasks_to_delay:
             task.state = 'b_delayed'
@@ -79,17 +82,7 @@ class CreateSubTaskLines(models.Model):
     task_assign_date = fields.Date(string="Sub Task Assign Date")
     task_completed_date = fields.Date(string="Sub Task Completed Date")
     remarks = fields.Char(string="Remarks")
-    rating = fields.Selection([
-        ('0', '0'),
-        ('1', '1'),
-        ('2', '2'),
-        ('3', '3'),
-        ('4', '4'),
-        ('5', '5'),
-        ('6', '6'),
-        ('7', '7'),
-        ('8', '8'),
-        ('9', '9'),
-        ('10', '10'),
-    ], 'Rating',
-        copy=False)
+    manager_rating = fields.Selection(rating, 'Manager Rating', copy=False)
+    hod_rating = fields.Selection(rating, 'HOD Rating', copy=False)
+    management_rating = fields.Selection(rating, 'Management Rating',
+                                         copy=False)

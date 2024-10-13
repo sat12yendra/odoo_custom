@@ -6,10 +6,8 @@
             <field name="model_id" ref="employee_work_performance.model_employee_task"/>
             <field name="state">code</field>
             <field name="code">model.check_tat_date()</field>
-            <field name="user_id" ref="base.user_root"/>
-            <field name="active">True</field>
-            <field name="interval_type">days</field>
             <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
             <field name="numbercall">-1</field>
         </record>
     </data>

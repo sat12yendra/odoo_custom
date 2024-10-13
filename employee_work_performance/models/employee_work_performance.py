@@ -9,6 +9,104 @@ class EmployeeWorkPerformance(models.Model):
     _inherit = ['mail.thread']
     _description = 'Create Employee Work Performance'
 
+    @api.depends('employee_kpi_ids', 'employee_kpi_ids.manager_rating', 'employee_kpi_ids.hod_rating',
+                 'employee_kpi_ids.management_rating')
+    def _compute_kpi_totals(self):
+        total_kpi_out_of = 0
+        for record in self:
+            # Number of reviewers
+            reviewer_count = len(record.employee_kpi_ids)
+
+            # Total out of (10 points per reviewer)
+            record.kpi_out_of = reviewer_count * 10
+            total_kpi_out_of += record.kpi_out_of
+
+            # Initialize rating counts
+            total_manager_rating = 0
+            total_hod_rating = 0
+            total_management_rating = 0
+
+            # Sum up ratings from each reviewer
+            for kpi in record.employee_kpi_ids:
+                total_manager_rating += int(kpi.manager_rating) if kpi.manager_rating else 0
+                total_hod_rating += int(kpi.hod_rating) if kpi.hod_rating else 0
+                total_management_rating += int(kpi.management_rating) if kpi.management_rating else 0
+
+            # Set individual rating counts
+            record.kpi_manager_rating_count = total_manager_rating
+            record.kpi_hod_rating_count = total_hod_rating
+            record.kpi_management_rating_count = total_management_rating
+
+            # Total rating count (sum of manager, HOD, and management ratings)
+            record.total_kpi_rating_count = total_manager_rating + total_hod_rating + total_management_rating
+        self.total_kpi_out_of = total_kpi_out_of * 3
+
+    @api.depends('employee_task_ids', 'employee_task_ids.manager_rating',
+                 'employee_task_ids.hod_rating', 'employee_task_ids.management_rating')
+    def _compute_task_totals(self):
+        total_task_out_of = 0
+        for record in self:
+            # Number of reviewers
+            reviewer_count = len(record.employee_task_ids)
+
+            # Total out of (10 points per reviewer)
+            record.task_out_of = reviewer_count * 10
+            total_task_out_of += record.task_out_of
+
+            # Initialize rating counts
+            total_manager_rating = 0
+            total_hod_rating = 0
+            total_management_rating = 0
+
+            # Sum up ratings from each reviewer
+            for task in record.employee_task_ids:
+                total_manager_rating += int(task.manager_rating) if task.manager_rating else 0
+                total_hod_rating += int(task.hod_rating) if task.hod_rating else 0
+                total_management_rating += int(task.management_rating) if task.management_rating else 0
+
+            # Set individual rating counts
+            record.task_manager_rating_count = total_manager_rating
+            record.task_hod_rating_count = total_hod_rating
+            record.task_management_rating_count = total_management_rating
+
+            # Total rating count (sum of manager, HOD, and management ratings)
+            record.total_task_rating_count = total_manager_rating + total_hod_rating + total_management_rating
+
+        self.total_task_out_of = total_task_out_of * 3  # Adjust multiplier as necessary
+
+    @api.depends('employee_behaviour_ids', 'employee_behaviour_ids.manager_rating',
+                 'employee_behaviour_ids.hod_rating', 'employee_behaviour_ids.management_rating')
+    def _compute_behaviour_totals(self):
+        total_behaviour_out_of = 0
+        for record in self:
+            # Number of reviewers
+            reviewer_count = len(record.employee_behaviour_ids)
+
+            # Total out of (10 points per reviewer)
+            record.behaviour_out_of = reviewer_count * 10
+            total_behaviour_out_of += record.behaviour_out_of
+
+            # Initialize rating counts
+            total_manager_rating = 0
+            total_hod_rating = 0
+            total_management_rating = 0
+
+            # Sum up ratings from each reviewer
+            for behaviour in record.employee_behaviour_ids:
+                total_manager_rating += int(behaviour.manager_rating) if behaviour.manager_rating else 0
+                total_hod_rating += int(behaviour.hod_rating) if behaviour.hod_rating else 0
+                total_management_rating += int(behaviour.management_rating) if behaviour.management_rating else 0
+
+            # Set individual rating counts
+            record.behaviour_manager_rating_count = total_manager_rating
+            record.behaviour_hod_rating_count = total_hod_rating
+            record.behaviour_management_rating_count = total_management_rating
+
+            # Total rating count (sum of manager, HOD, and management ratings)
+            record.total_behaviour_rating_count = total_manager_rating + total_hod_rating + total_management_rating
+
+        self.total_behaviour_out_of = total_behaviour_out_of * 3
+
     employee_id = fields.Many2one('hr.employee', string="Employee Name", tracking=True)
     department_id = fields.Many2one(related='employee_id.department_id', string='Department',
                                     check_company=True, tracking=True)
@@ -22,6 +120,33 @@ class EmployeeWorkPerformance(models.Model):
     parent_id = fields.Many2one(related='employee_id.parent_id', string='Manager', tracking=True)
     date = fields.Date("Date", tracking=True)
     year_of_kpi = fields.Char("Year of KPI", readonly=True, tracking=True)
+    kpi_note = fields.Text("KPI Note")
+    task_note = fields.Text("Task Note")
+    behaviour_note = fields.Text("Behaviour Note")
+    innovation_note = fields.Text("Innovation Note")
+
+    kpi_manager_rating_count = fields.Integer(string="Manager Rating Count", compute="_compute_kpi_totals")
+    kpi_hod_rating_count = fields.Integer(string="Hod Rating Count", compute="_compute_kpi_totals")
+    kpi_management_rating_count = fields.Integer(string="Management Rating Count", compute="_compute_kpi_totals")
+    kpi_out_of = fields.Integer(string="KPI Out of", compute="_compute_kpi_totals")
+    total_kpi_out_of = fields.Integer(string="Total Out of", compute="_compute_kpi_totals")
+    total_kpi_rating_count = fields.Integer(string="Total Rating Count", compute="_compute_kpi_totals")
+
+    task_manager_rating_count = fields.Integer(string="Manager Rating Count", compute="_compute_task_totals")
+    task_hod_rating_count = fields.Integer(string="Hod Rating Count", compute="_compute_task_totals")
+    task_management_rating_count = fields.Integer(string="Management Rating Count", compute="_compute_task_totals")
+    task_out_of = fields.Integer(string="Task Out of", compute="_compute_task_totals")
+    total_task_out_of = fields.Integer(string="Total Out of", compute="_compute_task_totals")
+    total_task_rating_count = fields.Integer(string="Total Rating Count", compute="_compute_task_totals")
+
+    behaviour_manager_rating_count = fields.Integer(string="Manager Rating Count", compute="_compute_behaviour_totals")
+    behaviour_hod_rating_count = fields.Integer(string="Hod Rating Count", compute="_compute_behaviour_totals")
+    behaviour_management_rating_count = fields.Integer(string="Management Rating Count",
+                                                       compute="_compute_behaviour_totals")
+    behaviour_out_of = fields.Integer(string="Behaviour Out of", compute="_compute_behaviour_totals")
+    total_behaviour_out_of = fields.Integer(string="Total Out of", compute="_compute_behaviour_totals")
+    total_behaviour_rating_count = fields.Integer(string="Total Rating Count", compute="_compute_behaviour_totals")
+
     kpi_reviewer_ids = fields.Many2many('hr.employee', 'kpi_reviewer_rel',
                                     'reviewer_id', 'kpi_id', string="KPI Reviewer")
     task_reviewer_ids = fields.Many2many('hr.employee', 'task_reviewer_rel',
