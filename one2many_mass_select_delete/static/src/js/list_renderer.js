@@ -52,6 +52,7 @@ export class TestX2ManyField extends X2ManyField {
         X2ManyField.components = { Pager, KanbanRenderer, ListRenderer: O2MListRenderer };
         this.dialog = useService("dialog");
         this.rpc = useService("rpc");  // Initialize rpc service
+        this.orm = useService("orm");
     }
 
     get hasSelected() {
@@ -60,14 +61,9 @@ export class TestX2ManyField extends X2ManyField {
 
     async sendTaskMail() {
         const selected = this.list.records.filter((rec) => rec.selected);
-        const modelName = 'employee.work.performance';  // Your model name
-        const methodName = 'action_send_task_mail'; // Your method name
-
         try {
-            await this.rpc({
-                model: modelName,
-                method: methodName,
-                args: [selected.map((record) => record.id)],  // Pass selected record IDs
+            await this.orm.call("employee.work.performance", "action_send_task_mail", [this.props.record.resId], {
+                selected_ids: selected.map((r) => r.resId),
             });
             this.dialog.add(AlertDialog, {
                 title: _t("Success"),
