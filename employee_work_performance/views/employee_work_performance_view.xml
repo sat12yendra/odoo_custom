@@ -49,7 +49,7 @@
                                     <group class="oe_subtotal_footer" colspan="2">
                                         <label for="kpi_manager_rating_count" groups="hrms.group_hr_user_manager"/>
                                         <div class="o_row" name="kpi_manager_rating_count" groups="hrms.group_hr_user_manager">
-                                            <span><field name="kpi_manager_rating_count"/></span> <span><field name="kpi_out_of"/></span>
+                                            <span><field name="kpi_manager_rating_count"/></span> /<span><field name="kpi_out_of"/></span>
                                         </div>
                                         <label for="kpi_hod_rating_count" groups="hrms.group_hr_hod"/>
                                         <div class="o_row" name="kpi_hod_rating_count" groups="hrms.group_hr_hod">
@@ -120,7 +120,7 @@
                                     <group class="oe_subtotal_footer" colspan="2">
                                         <label for="task_manager_rating_count" groups="hrms.group_hr_user_manager"/>
                                         <div class="o_row" name="task_manager_rating_count" groups="hrms.group_hr_user_manager">
-                                            <span><field name="task_manager_rating_count"/></span> <span><field name="task_out_of"/></span>
+                                            <span><field name="task_manager_rating_count"/></span> /<span><field name="task_out_of"/></span>
                                         </div>
                                         <label for="task_hod_rating_count" groups="hrms.group_hr_hod"/>
                                         <div class="o_row" name="task_hod_rating_count" groups="hrms.group_hr_hod">
@@ -141,7 +141,7 @@
                                     <div class="clearfix"/>
                                 </group>
                             </page>
-                            <page name="employee_behaviour" string="Employee Behaviour" groups="hrms.group_hr_hod">
+                            <page name="employee_behaviour" string="Employee Behaviour">
                                 <button name="action_send_behaviour_mail" type="object" string="Send Behaviour Email" class="btn-primary"/>
                                 <group>
                                     <field name="employee_behaviour_ids" string="">
@@ -161,7 +161,7 @@
                                     <group class="oe_subtotal_footer" colspan="2">
                                         <label for="behaviour_manager_rating_count" groups="hrms.group_hr_user_manager"/>
                                         <div class="o_row" name="behaviour_manager_rating_count" groups="hrms.group_hr_user_manager">
-                                            <span><field name="behaviour_manager_rating_count"/></span> <span><field name="behaviour_out_of"/></span>
+                                            <span><field name="behaviour_manager_rating_count"/></span> /<span><field name="behaviour_out_of"/></span>
                                         </div>
                                         <label for="behaviour_hod_rating_count" groups="hrms.group_hr_hod"/>
                                         <div class="o_row" name="behaviour_hod_rating_count" groups="hrms.group_hr_hod">
