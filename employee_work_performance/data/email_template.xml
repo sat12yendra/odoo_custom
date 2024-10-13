@@ -50,7 +50,7 @@
                     </thead>
                     <tbody>
                         <!-- Iterate through the One2many employee_task_ids field (Main Tasks) -->
-                        <t t-foreach="object.employee_task_ids" t-as="main_task">
+                        <t t-foreach="ctx['task_ids']" t-as="main_task">
                             <!-- Display Main Task -->
                             <tr>
                                 <td style="padding: 5px;">

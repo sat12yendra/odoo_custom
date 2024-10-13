@@ -71,19 +71,18 @@ class EmployeeWorkPerformance(models.Model):
             }
             template_id.send_mail(self.id, email_values=email_values, force_send=True)
 
-    def action_send_task_mail(self, selected_ids):
+    def action_send_task_mail(self, selected_ids=None):
         print("Callong********************")
         print("Selected IDs:", selected_ids)  # This will show the selected IDs in the logs
         template_id = self.env.ref('employee_work_performance.email_template_send_task')
-        for record_id in selected_ids:
-            record = self.browse(record_id)  # Browse the record based on the ID
-            email_values = {
-                'email_from': record.employee_id.parent_id.work_email if record.employee_id.parent_id else '',
-                'email_to': record.employee_id.work_email,
-                'email_cc': record.employee_id.parent_id.work_email if record.employee_id.parent_id else ''
-            }
-            if template_id:
-                template_id.send_mail(record.id, email_values=email_values, force_send=True)
+        task_ids = self.env["employee.task"].browse(selected_ids)
+        email_values = {
+            'email_from': self.employee_id.parent_id.work_email if self.employee_id.parent_id else '',
+            'email_to': self.employee_id.work_email,
+            'email_cc': self.employee_id.parent_id.work_email if self.employee_id.parent_id else ''
+        }
+        if template_id:
+            template_id.with_context(task_ids=task_ids).send_mail(self.id, email_values=email_values, force_send=True)
 
     def action_send_behaviour_mail(self):
         template_id = self.env.ref('employee_work_performance.email_template_send_behaviour')
