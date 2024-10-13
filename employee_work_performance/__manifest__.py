@@ -24,6 +24,7 @@ Long description of module's purpose
     'data': [
         'security/ir.model.access.csv',
         'data/email_template.xml',
+        'data/cron.xml',
         'views/behaviour_master_view.xml',
         'views/kpi_master_view.xml',
         'views/employee_work_performance_view.xml',
