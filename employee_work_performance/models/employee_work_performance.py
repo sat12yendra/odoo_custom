@@ -209,7 +209,9 @@ class EmployeeWorkPerformance(models.Model):
             for rec in kpi_master_data.kpi_ids:
                 employee_kpi_list += [{
                     'name': rec.name,
-                    'rating': '0'
+                    'manager_rating': '0',
+                    'hod_rating': '0',
+                    'management_rating': '0',
                 }]
 
         self.employee_kpi_ids = [(5, 0, 0)] + [(0, 0, rec) for rec in employee_kpi_list]
