@@ -51,6 +51,7 @@
             <field name="arch" type="xml">
                 <tree string="Employee Task" create="0" delete="0"
                       decoration-muted="state == 'b_delayed'">
+                    <field name="employee_work_performance_id" />
                     <field name="name" />
                     <field name="task_create_date"/>
                     <field name="task_assign_date"/>
