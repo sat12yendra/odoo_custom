@@ -22,6 +22,12 @@ class CreateTask(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Employee Create Task'
 
+    def _compute_access_rights(self):
+        user = self.env.user
+        for record in self:
+            record.is_hod = user.has_group('hrms.group_hr_hod')
+            record.is_super_admin = user.has_group('base.group_system')
+
     employee_work_performance_id = fields.Many2one('employee.work.performance',
                                                    string="Employee Work Performance")
     name = fields.Char(string="Task")
@@ -29,11 +35,17 @@ class CreateTask(models.Model):
     task_assign_date = fields.Date(string="Task Assign Date")
     task_tat_date = fields.Date(string="Task TAT Date")
     task_completed_date = fields.Date(string="Task Completed Date")
-    remarks = fields.Char(string="Remarks")
+    manager_remarks = fields.Char(string="Manager Remarks")
+    hod_remarks = fields.Char(string="HOD Remarks")
+    management_remarks = fields.Char(string="Management Remarks")
     manager_rating = fields.Selection(rating, 'Manager Rating', copy=False)
     hod_rating = fields.Selection(rating, 'HOD Rating', copy=False)
     management_rating = fields.Selection(rating, 'Management Rating',
                                          copy=False)
+
+    is_hod = fields.Boolean(compute='_compute_access_rights')
+    is_super_admin = fields.Boolean(compute='_compute_access_rights')
+
     state = fields.Selection([
         ('a_new', 'New'),
         ('assigned', 'Assigned'),
@@ -76,13 +88,24 @@ class CreateSubTaskLines(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Employee Create Task'
 
+    def _compute_access_rights(self):
+        user = self.env.user
+        for record in self:
+            record.is_hod = user.has_group('hrms.group_hr_hod')
+            record.is_super_admin = user.has_group('base.group_system')
+
     employee_sub_task_id = fields.Many2one('employee.task', string="Employee SubTask")
     name = fields.Char(string="Sub Task")
     task_create_date = fields.Date(string="Sub Task Create Date")
     task_assign_date = fields.Date(string="Sub Task Assign Date")
     task_completed_date = fields.Date(string="Sub Task Completed Date")
-    remarks = fields.Char(string="Remarks")
+    manager_remarks = fields.Char(string="Manager Remarks")
+    hod_remarks = fields.Char(string="HOD Remarks")
+    management_remarks = fields.Char(string="Management Remarks")
     manager_rating = fields.Selection(rating, 'Manager Rating', copy=False)
     hod_rating = fields.Selection(rating, 'HOD Rating', copy=False)
     management_rating = fields.Selection(rating, 'Management Rating',
                                          copy=False)
+
+    is_hod = fields.Boolean(compute='_compute_access_rights')
+    is_super_admin = fields.Boolean(compute='_compute_access_rights')

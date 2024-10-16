@@ -13,11 +13,11 @@
                                 <field name="employee_id" widget="many2one_avatar_user" required="1"
                                        options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
                                 <field name="date"/>
-                                <field name="kpi_reviewer_ids" widget="many2many_tags"
+                                <field name="kpi_reviewer_ids" widget="many2many_tags" required="1"
                                        options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
-                                <field name="task_reviewer_ids" widget="many2many_tags"
+                                <field name="task_reviewer_ids" widget="many2many_tags" required="1"
                                        options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
-                                <field name="behaviour_reviewer_ids" widget="many2many_tags"
+                                <field name="behaviour_reviewer_ids" widget="many2many_tags" required="1"
                                        options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
                             </group>
                             <group>
@@ -26,19 +26,30 @@
                                 <field name="job_id"/>
                                 <field name="parent_id"/>
                                 <field name="permit_position" invisible="1"/>
+                                <field name="kpi_tab_visible" invisible="1"/>
+                                <field name="task_tab_visible" invisible="1"/>
+                                <field name="behaviour_tab_visible" invisible="1"/>
                             </group>
                         </group>
                         <notebook>
-                            <page name="employee_kpi" string="Employee KPI">
+                            <page name="employee_kpi" string="Employee KPI" invisible="not kpi_tab_visible">
                                 <button name="action_send_kpi_mail" type="object" string="Send KPI Email" class="btn-primary"/>
                                 <group>
                                     <field name="employee_kpi_ids" string="">
                                         <tree editable="bottom">
                                             <field name="name"/>
-                                            <field name="manager_rating" groups="hrms.group_hr_user_manager"/>
-                                            <field name="hod_rating" groups="hrms.group_hr_hod"/>
+                                            <field name="manager_rating" readonly="is_hod or is_super_admin"
+                                                   groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system"/>
+                                            <field name="hod_rating" readonly="is_super_admin"
+                                                   groups="hrms.group_hr_hod,base.group_system"/>
                                             <field name="management_rating" groups="base.group_system"/>
-                                            <field name="remarks"/>
+                                            <field name="manager_remarks" readonly="is_hod or is_super_admin"
+                                                   groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system"/>
+                                            <field name="hod_remarks" readonly="is_super_admin"
+                                                   groups="hrms.group_hr_hod,base.group_system"/>
+                                            <field name="management_remarks" groups="base.group_system"/>
+                                            <field name="is_hod" column_invisible="1"/>
+                                            <field name="is_super_admin" column_invisible="1"/>
                                         </tree>
                                     </field>
                                 </group>
@@ -47,12 +58,12 @@
                                         <field  colspan="2" name="kpi_note" nolabel="1" placeholder="KPI Note..."/>
                                     </group>
                                     <group class="oe_subtotal_footer" colspan="2">
-                                        <label for="kpi_manager_rating_count" groups="hrms.group_hr_user_manager"/>
-                                        <div class="o_row" name="kpi_manager_rating_count" groups="hrms.group_hr_user_manager">
+                                        <label for="kpi_manager_rating_count" groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system"/>
+                                        <div class="o_row" name="kpi_manager_rating_count" groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system">
                                             <span><field name="kpi_manager_rating_count"/></span> /<span><field name="kpi_out_of"/></span>
                                         </div>
-                                        <label for="kpi_hod_rating_count" groups="hrms.group_hr_hod"/>
-                                        <div class="o_row" name="kpi_hod_rating_count" groups="hrms.group_hr_hod">
+                                        <label for="kpi_hod_rating_count" groups="hrms.group_hr_hod,base.group_system"/>
+                                        <div class="o_row" name="kpi_hod_rating_count" groups="hrms.group_hr_hod,base.group_system">
                                             <span><field name="kpi_hod_rating_count"/></span> /<span><field name="kpi_out_of" /></span>
                                         </div>
                                         <label for="kpi_management_rating_count" groups="base.group_system"/>
@@ -61,7 +72,7 @@
                                         </div>
                                     </group>
                                     <div class="clearfix"/>
-                                    <group class="oe_subtotal_footer" colspan="2" groups="base.group_system">
+                                    <group class="oe_subtotal_footer" colspan="2" groups="hrms.group_hr_hod,base.group_system">
                                         <label for="total_kpi_rating_count"/>
                                         <div class="o_row" name="total_kpi_rating_count">
                                             <span><field name="total_kpi_rating_count"/></span> /<span><field name="total_kpi_out_of"/></span>
@@ -70,7 +81,7 @@
                                     <div class="clearfix"/>
                                 </group>
                             </page>
-                            <page name="employee_task" string="Employee Task">
+                            <page name="employee_task" string="Employee Task" invisible="not task_tab_visible">
                                 <group>
                                     <field name="employee_task_ids" string="" widget="one2many_delete">
                                         <tree>
@@ -79,10 +90,18 @@
                                             <field name="task_assign_date"/>
                                             <field name="task_tat_date"/>
                                             <field name="task_completed_date"/>
-                                            <field name="manager_rating" groups="hrms.group_hr_user_manager"/>
-                                            <field name="hod_rating" groups="hrms.group_hr_hod"/>
+                                            <field name="manager_rating" readonly="is_hod or is_super_admin"
+                                                   groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system"/>
+                                            <field name="hod_rating" readonly="is_super_admin"
+                                                   groups="hrms.group_hr_hod,base.group_system"/>
                                             <field name="management_rating" groups="base.group_system"/>
-                                            <field name="remarks"/>
+                                            <field name="manager_remarks" readonly="is_hod or is_super_admin"
+                                                   groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system"/>
+                                            <field name="hod_remarks" readonly="is_super_admin"
+                                                   groups="hrms.group_hr_hod,base.group_system"/>
+                                            <field name="management_remarks" groups="base.group_system"/>
+                                            <field name="is_hod" column_invisible="1"/>
+                                            <field name="is_super_admin" column_invisible="1"/>
                                         </tree>
                                         <form>
                                             <group>
@@ -91,10 +110,18 @@
                                                 <field name="task_assign_date"/>
                                                 <field name="task_tat_date"/>
                                                 <field name="task_completed_date"/>
-                                                <field name="manager_rating" groups="hrms.group_hr_user_manager"/>
-                                                <field name="hod_rating" groups="hrms.group_hr_hod"/>
+                                                <field name="manager_rating" readonly="is_hod or is_super_admin"
+                                                       groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system"/>
+                                                <field name="hod_rating" readonly="is_super_admin"
+                                                       groups="hrms.group_hr_hod,base.group_system"/>
                                                 <field name="management_rating" groups="base.group_system"/>
-                                                <field name="remarks"/>
+                                                <field name="manager_remarks" readonly="is_hod or is_super_admin"
+                                                       groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system"/>
+                                                <field name="hod_remarks" readonly="is_super_admin"
+                                                       groups="hrms.group_hr_hod,base.group_system"/>
+                                                <field name="management_remarks" groups="base.group_system"/>
+                                                <field name="is_hod" invisible="1"/>
+                                                <field name="is_super_admin" invisible="1"/>
                                             </group>
                                             <group string="Employee SubTask">
                                                 <field name="sub_task_line_ids" string="">
@@ -103,10 +130,18 @@
                                                         <field name="task_create_date"/>
                                                         <field name="task_assign_date"/>
                                                         <field name="task_completed_date"/>
-                                                        <field name="manager_rating" groups="hrms.group_hr_user_manager"/>
-                                                        <field name="hod_rating" groups="hrms.group_hr_hod"/>
+                                                        <field name="manager_rating" readonly="is_hod or is_super_admin"
+                                                               groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system"/>
+                                                        <field name="hod_rating" readonly="is_super_admin"
+                                                               groups="hrms.group_hr_hod,base.group_system"/>
                                                         <field name="management_rating" groups="base.group_system"/>
-                                                        <field name="remarks"/>
+                                                        <field name="manager_remarks" readonly="is_hod or is_super_admin"
+                                                               groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system"/>
+                                                        <field name="hod_remarks" readonly="is_super_admin"
+                                                               groups="hrms.group_hr_hod,base.group_system"/>
+                                                        <field name="management_remarks" groups="base.group_system"/>
+                                                        <field name="is_hod" column_invisible="1"/>
+                                                        <field name="is_super_admin" column_invisible="1"/>
                                                     </tree>
                                                 </field>
                                             </group>
@@ -118,12 +153,12 @@
                                         <field  colspan="2" name="task_note" nolabel="1" placeholder="Task Note..."/>
                                     </group>
                                     <group class="oe_subtotal_footer" colspan="2">
-                                        <label for="task_manager_rating_count" groups="hrms.group_hr_user_manager"/>
-                                        <div class="o_row" name="task_manager_rating_count" groups="hrms.group_hr_user_manager">
+                                        <label for="task_manager_rating_count" groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system"/>
+                                        <div class="o_row" name="task_manager_rating_count" groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system">
                                             <span><field name="task_manager_rating_count"/></span> /<span><field name="task_out_of"/></span>
                                         </div>
-                                        <label for="task_hod_rating_count" groups="hrms.group_hr_hod"/>
-                                        <div class="o_row" name="task_hod_rating_count" groups="hrms.group_hr_hod">
+                                        <label for="task_hod_rating_count" groups="hrms.group_hr_hod,base.group_system"/>
+                                        <div class="o_row" name="task_hod_rating_count" groups="hrms.group_hr_hod,base.group_system">
                                             <span><field name="task_hod_rating_count"/></span> /<span><field name="task_out_of" /></span>
                                         </div>
                                         <label for="task_management_rating_count" groups="base.group_system"/>
@@ -132,7 +167,7 @@
                                         </div>
                                     </group>
                                     <div class="clearfix"/>
-                                    <group class="oe_subtotal_footer" colspan="2" groups="base.group_system">
+                                    <group class="oe_subtotal_footer" colspan="2" groups="hrms.group_hr_hod,base.group_system">
                                         <label for="total_task_rating_count"/>
                                         <div class="o_row" name="total_task_rating_count">
                                             <span><field name="total_task_rating_count"/></span> /<span><field name="total_task_out_of"/></span>
@@ -141,16 +176,24 @@
                                     <div class="clearfix"/>
                                 </group>
                             </page>
-                            <page name="employee_behaviour" string="Employee Behaviour">
+                            <page name="employee_behaviour" string="Employee Behaviour" invisible="not behaviour_tab_visible">
                                 <button name="action_send_behaviour_mail" type="object" string="Send Behaviour Email" class="btn-primary"/>
                                 <group>
                                     <field name="employee_behaviour_ids" string="">
                                         <tree editable="bottom">
                                             <field name="name"/>
-                                            <field name="manager_rating" groups="hrms.group_hr_user_manager"/>
-                                            <field name="hod_rating" groups="hrms.group_hr_hod"/>
+                                            <field name="manager_rating" readonly="is_hod or is_super_admin"
+                                                   groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system"/>
+                                            <field name="hod_rating" readonly="is_super_admin"
+                                                   groups="hrms.group_hr_hod,base.group_system"/>
                                             <field name="management_rating" groups="base.group_system"/>
-                                            <field name="remarks"/>
+                                            <field name="manager_remarks" readonly="is_hod or is_super_admin"
+                                                   groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system"/>
+                                            <field name="hod_remarks" readonly="is_super_admin"
+                                                   groups="hrms.group_hr_hod,base.group_system"/>
+                                            <field name="management_remarks" groups="base.group_system"/>
+                                            <field name="is_hod" column_invisible="1"/>
+                                            <field name="is_super_admin" column_invisible="1"/>
                                         </tree>
                                     </field>
                                 </group>
@@ -159,12 +202,12 @@
                                         <field  colspan="2" name="behaviour_note" nolabel="1" placeholder="Behaviour Note..."/>
                                     </group>
                                     <group class="oe_subtotal_footer" colspan="2">
-                                        <label for="behaviour_manager_rating_count" groups="hrms.group_hr_user_manager"/>
-                                        <div class="o_row" name="behaviour_manager_rating_count" groups="hrms.group_hr_user_manager">
+                                        <label for="behaviour_manager_rating_count" groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system"/>
+                                        <div class="o_row" name="behaviour_manager_rating_count" groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system">
                                             <span><field name="behaviour_manager_rating_count"/></span> /<span><field name="behaviour_out_of"/></span>
                                         </div>
-                                        <label for="behaviour_hod_rating_count" groups="hrms.group_hr_hod"/>
-                                        <div class="o_row" name="behaviour_hod_rating_count" groups="hrms.group_hr_hod">
+                                        <label for="behaviour_hod_rating_count" groups="hrms.group_hr_hod,base.group_system"/>
+                                        <div class="o_row" name="behaviour_hod_rating_count" groups="hrms.group_hr_hod,base.group_system">
                                             <span><field name="behaviour_hod_rating_count"/></span> /<span><field name="behaviour_out_of" /></span>
                                         </div>
                                         <label for="behaviour_management_rating_count" groups="base.group_system"/>
@@ -173,7 +216,7 @@
                                         </div>
                                     </group>
                                     <div class="clearfix"/>
-                                    <group class="oe_subtotal_footer" colspan="2" groups="base.group_system">
+                                    <group class="oe_subtotal_footer" colspan="2" groups="hrms.group_hr_hod,base.group_system">
                                         <label for="total_behaviour_rating_count"/>
                                         <div class="o_row" name="total_behaviour_rating_count">
                                             <span><field name="total_behaviour_rating_count"/></span> /<span><field name="total_behaviour_out_of"/></span>
@@ -187,10 +230,18 @@
                                     <field name="employee_innovation_ids" string="">
                                         <tree editable="bottom">
                                             <field name="name"/>
-                                            <field name="manager_rating" groups="hrms.group_hr_user_manager"/>
-                                            <field name="hod_rating" groups="hrms.group_hr_hod"/>
+                                            <field name="manager_rating" readonly="is_hod or is_super_admin"
+                                                   groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system"/>
+                                            <field name="hod_rating" readonly="is_super_admin"
+                                                   groups="hrms.group_hr_hod,base.group_system"/>
                                             <field name="management_rating" groups="base.group_system"/>
-                                            <field name="remarks"/>
+                                            <field name="manager_remarks" readonly="is_hod or is_super_admin"
+                                                   groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system"/>
+                                            <field name="hod_remarks" readonly="is_super_admin"
+                                                   groups="hrms.group_hr_hod,base.group_system"/>
+                                            <field name="management_remarks" groups="base.group_system"/>
+                                            <field name="is_hod" column_invisible="1"/>
+                                            <field name="is_super_admin" column_invisible="1"/>
                                         </tree>
                                     </field>
                                 </group>

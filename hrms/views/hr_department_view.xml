@@ -7,7 +7,11 @@
             <field name="inherit_id" ref="hr.view_department_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='parent_id']" position="after">
-                    <field name="reviewer_ids" widget="many2many_tags"
+                    <field name="kpi_reviewer_ids" widget="many2many_tags"
+                           options="{'no_open': True, 'no_quick_create': True}" />
+                    <field name="task_reviewer_ids" widget="many2many_tags"
+                           options="{'no_open': True, 'no_quick_create': True}" />
+                    <field name="behaviour_reviewer_ids" widget="many2many_tags"
                            options="{'no_open': True, 'no_quick_create': True}" />
                 </xpath>
             </field>

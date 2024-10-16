@@ -107,6 +107,20 @@ class EmployeeWorkPerformance(models.Model):
 
         self.total_behaviour_out_of = total_behaviour_out_of * 3
 
+    @api.depends('kpi_reviewer_ids', 'task_reviewer_ids', 'behaviour_reviewer_ids')
+    def _compute_reviewer_visibility(self):
+        for record in self:
+            user = self.env.user
+            # Super admin users can see all tabs
+            if user.has_group('base.group_system'):
+                record.kpi_tab_visible = True
+                record.task_tab_visible = True
+                record.behaviour_tab_visible = True
+            else:
+                record.kpi_tab_visible = user.employee_id in record.kpi_reviewer_ids
+                record.task_tab_visible = user.employee_id in record.task_reviewer_ids
+                record.behaviour_tab_visible = user.employee_id in record.behaviour_reviewer_ids
+
     employee_id = fields.Many2one('hr.employee', string="Employee Name", tracking=True)
     department_id = fields.Many2one(related='employee_id.department_id', string='Department',
                                     check_company=True, tracking=True)
@@ -147,6 +161,11 @@ class EmployeeWorkPerformance(models.Model):
     total_behaviour_out_of = fields.Integer(string="Total Out of", compute="_compute_behaviour_totals")
     total_behaviour_rating_count = fields.Integer(string="Total Rating Count", compute="_compute_behaviour_totals")
 
+    # Fields to store tab visibility status
+    kpi_tab_visible = fields.Boolean(compute="_compute_reviewer_visibility")
+    task_tab_visible = fields.Boolean(compute="_compute_reviewer_visibility")
+    behaviour_tab_visible = fields.Boolean(compute="_compute_reviewer_visibility")
+
     kpi_reviewer_ids = fields.Many2many('hr.employee', 'kpi_reviewer_rel',
                                     'reviewer_id', 'kpi_id', string="KPI Reviewer")
     task_reviewer_ids = fields.Many2many('hr.employee', 'task_reviewer_rel',
@@ -172,6 +191,15 @@ class EmployeeWorkPerformance(models.Model):
 
     @api.onchange('employee_id')
     def _onchange_get_department_kpi(self):
+        kpi_reviewer_ids = task_reviewer_ids = behaviour_reviewer_ids = []
+        if self.employee_id and self.employee_id.department_id:
+            department = self.employee_id.department_id
+            kpi_reviewer_ids = department.kpi_reviewer_ids.ids if department.kpi_reviewer_ids else []
+            task_reviewer_ids = department.task_reviewer_ids.ids if department.task_reviewer_ids else []
+            behaviour_reviewer_ids = department.behaviour_reviewer_ids.ids if department.behaviour_reviewer_ids else []
+        self.update({'kpi_reviewer_ids': [(6, 0, kpi_reviewer_ids)],
+                     'task_reviewer_ids': [(6, 0, task_reviewer_ids)],
+                     'behaviour_reviewer_ids': [(6, 0, behaviour_reviewer_ids)]})
         kpi_master_data = self.env["kpi.master"].search([
             ('department_id', '=', self.employee_id.department_id.id)
         ])
@@ -197,10 +225,10 @@ class EmployeeWorkPerformance(models.Model):
             template_id.send_mail(self.id, email_values=email_values, force_send=True)
 
     def action_send_task_mail(self, selected_ids=None):
-        print("Callong********************")
-        print("Selected IDs:", selected_ids)  # This will show the selected IDs in the logs
         template_id = self.env.ref('employee_work_performance.email_template_send_task')
         task_ids = self.env["employee.task"].browse(selected_ids)
+        if task_ids:
+            task_ids.sudo().update({'state': 'assigned'})
         email_values = {
             'email_from': self.employee_id.parent_id.work_email if self.employee_id.parent_id else '',
             'email_to': self.employee_id.work_email,
