@@ -24,6 +24,7 @@
                             <field name="task_assign_date" readonly="1"/>
                             <field name="task_tat_date" readonly="1"/>
                             <field name="task_completed_date" readonly="state in ['b_delayed', 'completed']"/>
+                            <field name="note" readonly="state == 'completed'"/>
                         </group>
                         <group string="Employee SubTask">
                             <field name="sub_task_line_ids" string="">
@@ -78,6 +79,7 @@
                     <field name="task_tat_date"/>
                     <field name="task_completed_date"/>
                     <field name="state"/>
+                    <field name="note" />
                     <searchpanel>
                         <field name="state" limit="0" string="Task Status" icon="fa-filter" color="#875A7B" enable_counters="1"/>
                     </searchpanel>

@@ -44,6 +44,7 @@ class CreateTask(models.Model):
                                          copy=False)
     is_hod = fields.Boolean(compute='_compute_access_rights')
     is_super_admin = fields.Boolean(compute='_compute_access_rights')
+    note = fields.Text("Note")
 
     state = fields.Selection([
         ('a_new', 'New'),
