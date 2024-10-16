@@ -42,7 +42,6 @@ class CreateTask(models.Model):
     hod_rating = fields.Selection(rating, 'HOD Rating', copy=False)
     management_rating = fields.Selection(rating, 'Management Rating',
                                          copy=False)
-
     is_hod = fields.Boolean(compute='_compute_access_rights')
     is_super_admin = fields.Boolean(compute='_compute_access_rights')
 

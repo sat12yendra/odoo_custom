@@ -1,6 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_employee_work_performance_manager,employee.work.performance.manager,model_employee_work_performance,hrms.group_hr_user_manager,1,1,1,1
 access_employee_work_performance_hod,employee.work.performance.hod,model_employee_work_performance,hrms.group_hr_hod,1,1,1,1
+access_employee_work_performance_employee,employee.work.performance.employee,model_employee_work_performance,hrms.group_employee,1,1,0,0
 
 access_behaviour_master_manager,behaviour.master.manager,model_behaviour_master,hrms.group_hr_user_manager,1,1,1,1
 access_behaviour_master_hod,behaviour.master.hod,model_behaviour_master,hrms.group_hr_hod,1,1,1,1
@@ -14,6 +15,7 @@ access_employee_task_employee,employee.task.employee,model_employee_task,hrms.gr
 
 access_employee_subtask_line_manager,employee.subtask.line.manager,model_employee_subtask_line,hrms.group_hr_user_manager,1,1,1,1
 access_employee_subtask_line_hod,employee.subtask.line.hod,model_employee_subtask_line,hrms.group_hr_hod,1,1,1,1
+access_employee_subtask_line_employee,employee.subtask.line.employee,model_employee_subtask_line,hrms.group_employee,1,1,0,0
 
 access_employee_behaviour_manager,employee.behaviour.manager,model_employee_behaviour,hrms.group_hr_user_manager,1,1,1,1
 access_employee_behaviour_hod,employee.behaviour.hod,model_employee_behaviour,hrms.group_hr_hod,1,1,1,1

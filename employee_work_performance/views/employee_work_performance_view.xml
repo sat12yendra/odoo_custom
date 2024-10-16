@@ -84,7 +84,9 @@
                             <page name="employee_task" string="Employee Task" invisible="not task_tab_visible">
                                 <group>
                                     <field name="employee_task_ids" string="" widget="one2many_delete">
-                                        <tree>
+                                        <tree decoration-success="state == 'completed'"
+                                              decoration-info="state == 'a_new'"
+                                              decoration-danger="state == 'b_delayed'">
                                             <field name="name" required="1"/>
                                             <field name="task_create_date"/>
                                             <field name="task_assign_date"/>
@@ -100,6 +102,10 @@
                                             <field name="hod_remarks" readonly="is_super_admin"
                                                    groups="hrms.group_hr_hod,base.group_system"/>
                                             <field name="management_remarks" groups="base.group_system"/>
+                                            <field name="state" widget="badge"
+                                                   decoration-success="state == 'completed'"
+                                                   decoration-info="state == 'a_new'"
+                                                   decoration-danger="state == 'b_delayed'"/>
                                             <field name="is_hod" column_invisible="1"/>
                                             <field name="is_super_admin" column_invisible="1"/>
                                         </tree>
