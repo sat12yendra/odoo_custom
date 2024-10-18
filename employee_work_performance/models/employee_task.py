@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from datetime import date
+from odoo.exceptions import ValidationError
 
 rating = [
         ('1', '1'),
@@ -59,6 +60,19 @@ class CreateTask(models.Model):
         """
         This is used to make employee task done
         """
+        # Ensure task_completed_date is selected
+        if not self.task_completed_date:
+            raise ValidationError(_("Please select task complete date!"))
+
+        # Ensure delay reason is entered if the task is delayed
+        if self.state == 'b_delayed' and not self.note:
+            raise ValidationError(_("Please enter delay reason inside note!"))
+
+        # Ensure task_completed_date is greater than or equal to task_tat_date
+        if self.task_completed_date < self.task_tat_date:
+            raise ValidationError(_("Task completed date must be greater than or equal to the task TAT date."))
+
+        # Mark task as completed
         self.state = 'completed'
 
     @api.model

@@ -229,15 +229,43 @@ class EmployeeWorkPerformance(models.Model):
     def action_send_task_mail(self, selected_ids=None):
         template_id = self.env.ref('employee_work_performance.email_template_send_task')
         task_ids = self.env["employee.task"].browse(selected_ids)
-        if task_ids:
-            task_ids.sudo().update({'state': 'assigned'})
-        email_values = {
-            'email_from': self.employee_id.parent_id.work_email if self.employee_id.parent_id else '',
-            'email_to': self.employee_id.work_email,
-            'email_cc': self.employee_id.parent_id.work_email if self.employee_id.parent_id else ''
+
+        # Filter tasks with state 'a_new'
+        new_task = task_ids.filtered(lambda task: task.state == 'a_new')
+        msg = "There is not any new task in selected list. Please check."
+        title = 'Warning'
+
+        # Check if any task is new
+        if new_task:
+            # Update the state of the new tasks
+            new_task.sudo().update({'state': 'assigned'})
+
+            # Prepare email values
+            email_values = {
+                'email_from': self.employee_id.parent_id.work_email if self.employee_id.parent_id else '',
+                'email_to': self.employee_id.work_email,
+                'email_cc': self.employee_id.parent_id.work_email if self.employee_id.parent_id else ''
+            }
+
+            # Send email if template exists
+            if template_id:
+                template_id.with_context(task_ids=new_task).send_mail(self.id, email_values=email_values,
+                                                                      force_send=True)
+
+            # Update success message
+            msg = "Email has been sent successfully."
+            title = 'Success'
+
+        # Return the message to be displayed on the front-end
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': title,
+                'message': msg,
+                'sticky': False,
+            },
         }
-        if template_id:
-            template_id.with_context(task_ids=task_ids).send_mail(self.id, email_values=email_values, force_send=True)
 
     def action_send_behaviour_mail(self):
         template_id = self.env.ref('employee_work_performance.email_template_send_behaviour')

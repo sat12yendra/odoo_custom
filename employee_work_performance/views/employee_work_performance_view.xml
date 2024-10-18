@@ -112,10 +112,10 @@
                                         <form>
                                             <group>
                                                 <field name="name" required="1"/>
-                                                <field name="task_create_date"/>
-                                                <field name="task_assign_date"/>
-                                                <field name="task_tat_date"/>
-                                                <field name="task_completed_date"/>
+                                                <field name="task_create_date" required="1"/>
+                                                <field name="task_assign_date" required="1"/>
+                                                <field name="task_tat_date" required="1"/>
+                                                <field name="task_completed_date" />
                                                 <field name="manager_rating" readonly="is_hod or is_super_admin"
                                                        groups="hrms.group_hr_user_manager,hrms.group_hr_hod,base.group_system"/>
                                                 <field name="hod_rating" readonly="is_super_admin"
