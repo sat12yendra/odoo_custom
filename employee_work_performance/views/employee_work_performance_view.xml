@@ -83,7 +83,7 @@
                             </page>
                             <page name="employee_task" string="Employee Task" invisible="not task_tab_visible">
                                 <group>
-                                    <field name="employee_task_ids" string="" widget="one2many_delete">
+                                    <field name="employee_task_ids" string="" widget="one2many_task_selection">
                                         <tree decoration-success="state == 'completed'"
                                               decoration-info="state == 'a_new'"
                                               decoration-danger="state == 'b_delayed'">
@@ -126,6 +126,7 @@
                                                 <field name="hod_remarks" readonly="is_super_admin"
                                                        groups="hrms.group_hr_hod,base.group_system"/>
                                                 <field name="management_remarks" groups="base.group_system"/>
+                                                <field name="task_upload_file_ids" widget="many2many_binary"/>
                                                 <field name="is_hod" invisible="1"/>
                                                 <field name="is_super_admin" invisible="1"/>
                                             </group>
@@ -146,6 +147,7 @@
                                                         <field name="hod_remarks" readonly="is_super_admin"
                                                                groups="hrms.group_hr_hod,base.group_system"/>
                                                         <field name="management_remarks" groups="base.group_system"/>
+                                                        <field name="sub_task_upload_file_ids" widget="many2many_binary"/>
                                                         <field name="is_hod" column_invisible="1"/>
                                                         <field name="is_super_admin" column_invisible="1"/>
                                                     </tree>

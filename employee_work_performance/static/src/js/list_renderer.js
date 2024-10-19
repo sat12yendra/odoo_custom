@@ -89,9 +89,9 @@ async sendTaskMail() {
 
 }
 
-TestX2ManyField.template = "One2manyDelete";
+TestX2ManyField.template = "One2manyTaskSelection";
 export const oo = {
     ...x2ManyField,
     component: TestX2ManyField,
 };
-registry.category("fields").add("one2many_delete", oo);
+registry.category("fields").add("one2many_task_selection", oo);

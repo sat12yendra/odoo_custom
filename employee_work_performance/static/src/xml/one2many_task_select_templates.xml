@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Add the Send Task Mail button -->
 <templates id="template" xml:space="preserve">
-    <t t-name="One2manyDelete"
+    <t t-name="One2manyTaskSelection"
        t-inherit="web.X2ManyField" t-inherit-mode="primary" owl="1">
         <xpath expr="//div[hasclass('o_x2m_control_panel')]" position="inside">
             <div>

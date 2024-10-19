@@ -55,6 +55,7 @@ class CreateTask(models.Model):
     ], string='Task Status', default='a_new')
     sub_task_line_ids = fields.One2many('employee.subtask.line',
                                         'employee_sub_task_id', string="Sub Task Lines")
+    task_upload_file_ids = fields.Many2many('ir.attachment', string="Upload File's")
 
     def action_done(self):
         """
@@ -123,3 +124,4 @@ class CreateSubTaskLines(models.Model):
 
     is_hod = fields.Boolean(compute='_compute_access_rights')
     is_super_admin = fields.Boolean(compute='_compute_access_rights')
+    sub_task_upload_file_ids = fields.Many2many('ir.attachment', string="Upload File's")
