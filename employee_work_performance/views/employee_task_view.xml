@@ -25,6 +25,7 @@
                             <field name="task_tat_date" readonly="1"/>
                             <field name="task_completed_date" required="1" readonly="state == 'completed'"/>
                             <field name="note" readonly="state == 'completed'" required="state == 'b_delayed'"/>
+                            <field name="task_upload_file_ids" widget="many2many_binary" readonly="state == 'completed'"/>
                         </group>
                         <group string="Employee SubTask">
                             <field name="sub_task_line_ids" string="">
@@ -33,6 +34,7 @@
                                     <field name="task_create_date" readonly="1"/>
                                     <field name="task_assign_date" readonly="1"/>
                                     <field name="task_completed_date" required="1" readonly="parent.state == 'completed'"/>
+                                    <field name="sub_task_upload_file_ids" widget="many2many_binary" readonly="parent.state == 'completed'"/>
                                 </tree>
                             </field>
                         </group>
