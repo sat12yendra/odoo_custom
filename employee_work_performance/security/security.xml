@@ -16,4 +16,32 @@
         <field name="domain_force">[(1, '=', 1)]</field>
         <field name="groups" eval="[(4, ref('base.group_system'))]"/>
     </record>
+
+    <!-- Task rule -->
+    <record id="rule_employee_task_hod_manager" model="ir.rule">
+        <field name="name">Task Visibility for HOD/Manager</field>
+        <field name="model_id" ref="model_employee_task"/>
+        <field name="domain_force">[
+            ('employee_work_performance_id.employee_id.department_id', '=', user.employee_id.department_id.id) ]
+        </field>
+        <field name="groups" eval="[(4, ref('hrms.group_hr_hod')), (4, ref('hrms.group_hr_manager'))]"/>
+    </record>
+
+    <record id="rule_employee_task_employee" model="ir.rule">
+        <field name="name">Task Visibility for Employees</field>
+        <field name="model_id" ref="model_employee_task"/>
+        <field name="domain_force">[
+            ('state', '!=', 'a_new'),
+            ('employee_work_performance_id.employee_id.user_id', '=', user.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('hrms.group_employee'))]"/>
+    </record>
+
+    <record id="rule_employee_task_super_admin" model="ir.rule">
+        <field name="name">Task Visibility for Super Admin</field>
+        <field name="model_id" ref="model_employee_task"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+    </record>
+
 </odoo>

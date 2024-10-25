@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.rpc.connector</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="90"/>
+            <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//block[@name='employee_rights_setting_container']" position="after">
+                    <block title="XMLRPC Connector" id="end_xmlrpc_setting">
+                        <setting>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="rpc_url" string="URL" class="col-lg-3"/>
+                                    <field name="rpc_url"/>
+                                </div>
+                                <div class="row mt16">
+                                    <label for="rpc_db" string="DB" class="col-lg-3"/>
+                                    <field name="rpc_db"/>
+                                </div>
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="rpc_username" string="User" class="col-lg-3"/>
+                                    <field name="rpc_username"/>
+                                </div>
+                                <div class="row mt16">
+                                    <label for="rpc_password" string="Password" class="col-lg-3"/>
+                                    <field name="rpc_password" password="True"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="xmlrpc_config_settings_action" model="ir.actions.act_window">
+            <field name="name">Settings</field>
+            <field name="res_model">res.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="context">{'module' : 'rpc_connector', 'bin_size': False}</field>
+        </record>
+
+        <menuitem id="rpc_connector_config_settings_menu" name="Settings"
+                  parent="hr.menu_human_resources_configuration" sequence="0"
+                  action="xmlrpc_config_settings_action"/>
+    </data>
+</odoo>

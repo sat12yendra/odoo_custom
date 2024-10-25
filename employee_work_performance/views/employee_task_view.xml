@@ -89,18 +89,11 @@
             </field>
         </record>
 
-        <record id="action_employee_task_user" model="ir.actions.act_window">
+        <record id="action_employee_task" model="ir.actions.act_window">
             <field name="name">Employee Task Dashboard</field>
             <field name="res_model">employee.task</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('state', '!=', 'a_new'),
-                                  ('employee_work_performance_id.employee_id.user_id', '=', uid)]</field>
         </record>
 
-        <record id="action_employee_task_admin" model="ir.actions.act_window">
-            <field name="name">Employee Task Dashboard</field>
-            <field name="res_model">employee.task</field>
-            <field name="view_mode">tree,form</field>
-        </record>
     </data>
 </odoo>

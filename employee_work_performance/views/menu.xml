@@ -19,17 +19,9 @@
         <menuitem
             id="menu_employee_task_dashboard"
             name="Employee Task Dashboard"
-            action="action_employee_task_admin"
+            action="action_employee_task"
             parent="menu_root_employee_work_performance"
-            groups="hrms.group_hr_user_manager,hrms.group_hr_hod"
-            sequence="2"/>
-
-        <menuitem
-            id="menu_employee_task_dashboard_user"
-            name="Employee Task Dashboard"
-            action="action_employee_task_user"
-            parent="menu_root_employee_work_performance"
-            groups="hrms.group_employee"
+            groups="hrms.group_hr_user_manager,hrms.group_hr_hod,hrms.group_employee"
             sequence="2"/>
 
         <menuitem
