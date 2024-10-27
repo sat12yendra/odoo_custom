@@ -6,26 +6,37 @@
             id="menu_root_employee_work_performance"
             name="Employee Work Performance"
             web_icon="employee_work_performance,static/description/icon.png"
-            groups="hrms.group_hr_user_manager,hrms.group_hr_hod"/>
+            groups="hrms.group_hr_user_manager,hrms.group_hr_hod,hrms.group_employee"/>
 
         <menuitem
             id="menu_employee_work_performance"
             name="Employee Work Performance"
             action="action_employee_work_performance"
             parent="menu_root_employee_work_performance"
+            groups="hrms.group_hr_user_manager,hrms.group_hr_hod"
             sequence="1"/>
 
         <menuitem
             id="menu_employee_task_dashboard"
             name="Employee Task Dashboard"
-            action="action_employee_task"
+            action="action_employee_task_admin"
             parent="menu_root_employee_work_performance"
+            groups="hrms.group_hr_user_manager,hrms.group_hr_hod"
+            sequence="2"/>
+
+        <menuitem
+            id="menu_employee_task_dashboard_user"
+            name="Employee Task Dashboard"
+            action="action_employee_task_user"
+            parent="menu_root_employee_work_performance"
+            groups="hrms.group_employee"
             sequence="2"/>
 
         <menuitem
             id="menu_employee_work_performance_configuration"
             name="Configuration"
             parent="menu_root_employee_work_performance"
+            groups="hrms.group_hr_user_manager,hrms.group_hr_hod"
             sequence="3"/>
 
         <menuitem

@@ -18,12 +18,14 @@ Long description of module's purpose
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['hrms', 'africab_core', 'one2many_mass_select_delete'],
+    'depends': ['hrms', 'africab_core'],
 
     # always loaded
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
         'data/email_template.xml',
+        'data/cron.xml',
         'views/behaviour_master_view.xml',
         'views/kpi_master_view.xml',
         'views/employee_work_performance_view.xml',
@@ -34,5 +36,11 @@ Long description of module's purpose
     'demo': [
         'demo/demo.xml',
     ],
+    'assets': {
+            'web.assets_backend': [
+                'employee_work_performance/static/src/css/widget.css',
+                'employee_work_performance/static/src/xml/one2many_task_select_templates.xml',
+                'employee_work_performance/static/src/js/list_renderer.js',
+            ],
+        },
 }
-

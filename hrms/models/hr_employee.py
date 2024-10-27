@@ -27,7 +27,21 @@ class HrEmployee(models.Model):
             return delta.days + 1  # Include both start and end dates
         return 0
 
-    age = fields.Integer("Age")
+    @api.depends('birthday')
+    def _compute_age(self):
+        for record in self:
+            if record.birthday:
+                today = date.today()
+                # Calculate the difference between today and the birthday
+                age = today.year - record.birthday.year
+                # Adjust age if birthday has not occurred yet this year
+                if (today.month, today.day) < (record.birthday.month, record.birthday.day):
+                    age -= 1
+                record.age = age
+            else:
+                record.age = 0
+
+    age = fields.Integer("Age", compute="_compute_age", store=True)
     nssf_no = fields.Char("NSSF No.")
     tin_no = fields.Char("Tin No.")
     whatsapp_no = fields.Char("WhatsApp No.")
@@ -116,17 +130,6 @@ class HrEmployee(models.Model):
     appr_management_note_file_name = fields.Char()
     appr_directors_note_file = fields.Binary("Directors Notes")
     appr_directors_note_file_name = fields.Char()
-
-    reviewer_ids = fields.Many2many('hr.employee', 'employee_reviewer_rel',
-                                    'reviewer_id', 'employee_id', string="Reviewer")
-
-    @api.onchange('department_id')
-    def _onchange_reviewer_ids(self):
-        for employee in self.filtered('department_id'):
-            if employee.department_id.reviewer_ids:
-                employee.reviewer_ids = [(6, 0, employee.department_id.reviewer_ids.ids)]
-            else:
-                employee.reviewer_ids = [(5, 0, 0)]
 
     @api.onchange('appr_offer_letter')
     def _onchange_appr_offer_letter(self):
@@ -431,6 +434,7 @@ class EmployeeEducationDetails(models.Model):
     employee_id = fields.Many2one('hr.employee', string="Employee")
     certificate = fields.Selection([
         ('graduate', 'Graduate'),
+        ('diploma', 'Diploma'),
         ('bachelor', 'Bachelor'),
         ('master', 'Master'),
         ('doctor', 'Doctor'),

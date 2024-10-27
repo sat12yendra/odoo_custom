@@ -59,7 +59,7 @@
                                 </td>
                                 <td style="padding: 5px;">
                                     <!-- Main Task TAT -->
-                                    <t t-esc="main_task.task_completed_date and main_task.task_completed_date.strftime('%d %B %Y') or 'Pending'"/>
+                                    <t t-esc="main_task.task_tat_date and main_task.task_tat_date.strftime('%d %B %Y') or 'Pending'"/>
                                 </td>
                             </tr>
 
@@ -73,7 +73,7 @@
                                     </td>
                                     <td style="padding: 5px;">
                                         <!-- Sub Task TAT -->
-                                        <t t-esc="sub_task.task_completed_date and sub_task.task_completed_date.strftime('%d %B %Y') or 'Pending'"/>
+                                        <t t-esc="main_task.task_tat_date and main_task.task_tat_date.strftime('%d %B %Y') or 'Pending'"/>
                                     </td>
                                 </tr>
                                 <t t-set="j" t-value="j + 1"/>
@@ -137,6 +137,33 @@
                 Dar Es Salaam, Tanzania<br> </br>
                 Email:hr@africab.com</p>
             </field>
+        </record>
+
+        <!-- Email template for task delayed notification -->
+        <record id="task_delayed_email_template" model="mail.template">
+            <field name="name">Task Delayed Notification</field>
+            <field name="model_id" ref="employee_work_performance.model_employee_task"/>
+            <field name="subject">Task Delayed: ${object.name}</field>
+            <field name="email_from">${(user.email or '')|safe}</field>
+            <field name="email_to">${object.employee_work_performance_id.employee_id.parent_id.work_email|safe}</field>
+            <field name="body_html">
+                <![CDATA[
+                <p>Hello ${object.employee_work_performance_id.employee_id.parent_id.name},</p>
+                <p>The following task has been delayed:</p>
+                <ul>
+                    <li><strong>Task:</strong> ${object.name}</li>
+                    <li><strong>Assigned to:</strong> ${object.employee_work_performance_id.employee_id.name}</li>
+                    <li><strong>Deadline:</strong> ${object.task_tat_date}</li>
+                </ul>
+                <p>Please take appropriate action.</p>
+                <br> </br><br> </br>
+                <p>Africab Group<br> </br>
+                Human Resource Department<br> </br>
+                Dar Es Salaam, Tanzania<br> </br>
+                Email:hr@africab.com</p>
+                ]]>
+            </field>
+            <field name="auto_delete" eval="True"/>
         </record>
 
     </data>

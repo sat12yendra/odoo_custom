@@ -7,13 +7,13 @@
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='mobile_phone']" position="before">
+                    <field name="birthday"/>
                     <field name="age" />
                     <field name="gender" />
                     <field name="community" />
                 </xpath>
                 <xpath expr="//field[@name='work_email']" position="after">
                     <field name="nssf_no" />
-                    <field name="currency_id" />
                 </xpath>
                 <xpath expr="//field[@name='job_title']" position="after">
                     <field name="permit_position"  placeholder="Permit Position"/>
@@ -32,8 +32,7 @@
                 <xpath expr="//field[@name='coach_id']" position="after">
                     <field name="tin_no" />
                     <field name="whatsapp_no" />
-                    <field name="reviewer_ids" widget="many2many_tags"
-                           options="{'no_open': True, 'no_quick_create': True}" />
+                    <field name="currency_id" />
                 </xpath>
                 <xpath expr="//page[@name='personal_information']" position="replace">
                     <page name="personal_information" string="Private Information" groups="hr.group_hr_user">
@@ -99,7 +98,6 @@
                                 <field name="passport_exp_date"/>
                                 <field name="passport_taken_date"/>
                                 <field name="passport_collect_date"/>
-                                <field name="birthday"/>
                                 <field name="place_of_birth"/>
                                 <field name="country_of_birth"/>
                                 <field name="passport_file_name" invisible="1"/>

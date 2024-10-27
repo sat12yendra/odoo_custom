@@ -59,29 +59,39 @@ export class TestX2ManyField extends X2ManyField {
         return this.list.records.filter((rec) => rec.selected).length > 0;
     }
 
-    async sendTaskMail() {
-        const selected = this.list.records.filter((rec) => rec.selected);
-        try {
-            await this.orm.call("employee.work.performance", "action_send_task_mail", [this.props.record.resId], {
-                selected_ids: selected.map((r) => r.resId),
-            });
+async sendTaskMail() {
+    const selected = this.list.records.filter((rec) => rec.selected);
+    try {
+        const response = await this.orm.call("employee.work.performance", "action_send_task_mail", [this.props.record.resId], {
+            selected_ids: selected.map((r) => r.resId),
+        });
+
+        // Check if response contains the 'params' object with 'title' and 'message'
+        if (response && response.params) {
             this.dialog.add(AlertDialog, {
-                title: _t("Success"),
-                body: _t("Emails sent successfully!"),
+                title: _t(response.params.title || "Notice"), // Default to "Notice" if title is missing
+                body: _t(response.params.message || "No message provided."), // Default message if empty
             });
-        } catch (error) {
-            console.error("Error sending mail:", error);
+        } else {
             this.dialog.add(AlertDialog, {
                 title: _t("Error"),
-                body: _t("Failed to send emails. Please try again later."),
+                body: _t("Unexpected response structure from server."),
             });
         }
+    } catch (error) {
+        console.error("Error sending mail:", error);
+        this.dialog.add(AlertDialog, {
+            title: _t("Error"),
+            body: _t("Failed to send emails. Please try again later."),
+        });
     }
 }
 
-TestX2ManyField.template = "One2manyDelete";
+}
+
+TestX2ManyField.template = "One2manyTaskSelection";
 export const oo = {
     ...x2ManyField,
     component: TestX2ManyField,
 };
-registry.category("fields").add("one2many_delete", oo);
+registry.category("fields").add("one2many_task_selection", oo);
