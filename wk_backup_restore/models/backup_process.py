@@ -181,7 +181,7 @@ class BackupProcess(models.Model):
 
         master_pass = config.get('master_passwd')
         if master_pass:
-            url = "localhost:"+str(config.get('http_port', '8069'))
+            url = "localhost:"+str(config.get('http_port', '8017'))
             return self.call_backup_script(master_pass=master_pass, url=url)
         else:
             _logger.info("------Error While Creating Backup Request--Master Password(master_passwd) is not set in conf file!!----------------")
@@ -209,7 +209,7 @@ class BackupProcess(models.Model):
         """
 
         current_time = datetime.now()
-        processes = self.env['backup.process'].sudo().search([('backup_starting_time', '<=', current_time), ('state', '=', 'confirm')])
+        processes = self.env['backup.process'].sudo().search([])
         for process in processes:
             process.create_backup_request()
         upt_processes = self.env['backup.process'].sudo().search([('backup_starting_time', '<=', current_time), ('state', '=', 'running'), ('update_requested', '=', True)])        
