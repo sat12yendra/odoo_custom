@@ -66,8 +66,8 @@
                                        filename="aadhaar_no_file_name" widget="binary_preview"/>
                                 <field name="alien_card" string="Alien Card"/>
                                 <field name="swift_code" string="Swift Code"/>
-                                <field name="medical_certificate"/>
-                                <field name="pcc_certificate"/>
+                                <field name="medical_certificate" widget="binary_preview"/>
+                                <field name="pcc_certificate" widget="binary_preview"/>
                                 <field name="pan_no_file_name" invisible="1"/>
                                 <field name="aadhaar_no_file_name" invisible="1"/>
                                 <separator name="family_status" string="Family Status"/>
@@ -88,7 +88,8 @@
                                 <field name="special_pass_exp_date"/>
                                 <field name="work_permit_expiration_date"/>
                                 <field name="work_permit_name" invisible="1"/>
-                                <field name="has_work_permit" widget="work_permit_upload" filename="work_permit_name"/>
+<!--                                <field name="has_work_permit" widget="work_permit_upload" filename="work_permit_name"/>-->
+                                <field name="has_work_permit" widget="binary_preview" filename="work_permit_name"/>
                                 <separator name="citizenship" string="Citizenship"/>
                                 <field name="country_id" options='{"no_open": True, "no_create": True}'/>
                                 <field name="identification_id"/>
