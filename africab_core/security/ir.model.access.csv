@@ -4,3 +4,6 @@ access_super_res_company,africab_core.res.company,base.model_res_company,africab
 
 access_super_page_restriction,africab_core.page_restriction,hide_page_user.model_page_configuration,africab_core.group_system_super_admin,1,1,1,1
 access_super_access_right,africab_core.access.right,model_access_rights.model_access_right,africab_core.group_system_super_admin,1,1,1,1
+
+access_hide_policy_user,access_hide_policy_user,model_hide_policy,base.group_user,1,0,0,0
+access_hide_policy_manager,access_hide_policy_manager,model_hide_policy,base.group_system,1,1,1,1
