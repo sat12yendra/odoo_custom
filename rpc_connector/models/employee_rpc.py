@@ -1,12 +1,9 @@
 import logging
-import base64
-import ssl
 import xmlrpc.client
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
-
 
 class EmployeeRPC(models.Model):
     _inherit = 'hr.employee'
@@ -25,151 +22,161 @@ class EmployeeRPC(models.Model):
 
         return url, db, username, password
 
-    def create_employee(self, employee_data):
-        url, db, username, password = self._get_rpc_credentials()
-
-        try:
-            # Establish the connection
-            common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common')
-            uid = common.authenticate(db, username, password, {})
-
-            if uid is None:
-                raise UserError("Authentication failed!")
-
-            models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object')
-
-            # Create employee record dynamically with all matched fields
-            employee_id = models.execute_kw(db, uid, password, 'hr.employee', 'create', [employee_data])
-
-            return employee_id
-        except Exception as e:
-            raise UserError(f"Error in XML-RPC call: {str(e)}")
-
     def button_get_employee_data(self):
-        """Fetch employee data based on the selected record's ID and create in target DB."""
-        self.ensure_one()  # Ensure we're working with a singleton
-        employee_id = self.id
-        url, db, username, password = self._get_rpc_credentials()
+        """Fetch employee data based on the selected record's ID and create or update in target DB."""
+        for employee in self:
+            url, db, username, password = self._get_rpc_credentials()
+            try:
+                # Extract values for comparison
+                employee_name = employee.name
+                employee_email = employee.work_email
 
-        try:
-            # Fetch employee data from the current Odoo database
-            current_employee_data = self.browse(employee_id)
-            if not current_employee_data.exists():
-                raise UserError(f"No employee data found for ID {employee_id}")
+                # Establish the connection to the target database
+                common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common')
+                uid = common.authenticate(db, username, password, {})
 
-            # Prepare employee_data to pass to create_employee
-            employee_data = self.prepare_employee_values(current_employee_data, db, username, password)
-            print("sssssssssssssss", employee_data)
-            # Call create_employee method to create employee in the target DB
-            created_employee_id = self.create_employee(employee_data)
+                if uid is None:
+                    raise UserError("Authentication failed!")
 
-            _logger.info(f"Employee created in target DB with ID: {created_employee_id}")
+                models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object')
 
-            return created_employee_id  # Return the created employee ID
+                # Check if employee with the same name and work_email already exists in target DB
+                existing_employee_ids = models.execute_kw(db, uid, password, 'hr.employee', 'search', [
+                    [('work_email', '=', employee_email)]
+                ])
 
-        except Exception as e:
-            _logger.error(f"Error fetching and creating employee data: {str(e)}")
-            raise UserError(f"Error fetching and creating employee data: {str(e)}")
+                # Prepare employee data
+                employee_data = self.prepare_employee_values(employee, models, url, db, uid, password)
 
-    def prepare_employee_values(self, employee_data, db, uid, password):
+                if existing_employee_ids:
+                    # If employee exists, update the existing record
+                    employee_id_to_update = existing_employee_ids[0]
+                    models.execute_kw(db, uid, password, 'hr.employee', 'write', [
+                        [employee_id_to_update], employee_data
+                    ])
+                    _logger.info(f"Employee with ID {employee_id_to_update} updated in target DB.")
+                    message = f"Employee '{employee_name}' successfully updated in the target database with ID {employee_id_to_update}."
+                else:
+                    # If employee does not exist, create a new record
+                    created_employee_id = models.execute_kw(db, uid, password, 'hr.employee', 'create', [employee_data])
+                    _logger.info(f"Employee created in target DB with ID: {created_employee_id}")
+                    message = f"Employee '{employee_name}' successfully created in the target database with ID {created_employee_id}."
+
+                # Success message
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': 'Success',
+                        'message': message,
+                        'type': 'success',
+                        'sticky': False,
+                    }
+                }
+
+            except Exception as e:
+                _logger.error(f"Error fetching and creating or updating employee data: {str(e)}")
+                raise UserError(f"Error fetching and creating or updating employee data: {str(e)}")
+
+    def prepare_employee_values(self, employee_data, models, url, db, uid, password):
         """Prepare employee values based on field types for XML-RPC."""
         employee_values = {}
 
         # Retrieve employee fields metadata dynamically
-        employee_fields = self._get_employee_fields()  # Assuming this method returns a dict with field names as keys and field info as values
+        employee_fields = self._get_employee_fields()
         for field_name, field_info in employee_fields.items():
             field_type = field_info.get('type')
-            relation = field_info.get('relation')
 
             if field_name in employee_data:
                 field_value = employee_data[field_name]
 
                 # Handle simple field types
                 if field_type in ['char', 'text', 'integer', 'float', 'boolean', 'selection']:
-                    employee_values[
-                        field_name] = field_value if field_value is not None else False  # Replace None with False or omit the field
+                    employee_values[field_name] = field_value if field_value is not None else False
 
-                # Handle Many2one fields
-                # elif field_type == 'many2one':
-                #     employee_values[field_name] = field_value if isinstance(field_value, int) else self._get_related_id(
-                #         field_value, relation, db, uid, password)
-
-                # Handle Many2many fields
-                # elif field_type == 'many2many':
-                #     employee_values[field_name] = [(6, 0, field_value)] if isinstance(field_value,
-                #                                                                       list) else self._get_related_ids(
-                #         field_value, relation, db, uid, password)
-
-                # Handle One2many fields
-                # elif field_type == 'one2many':
-                #     employee_values[field_name] = self._prepare_sub_records(field_value, relation, db, uid, password)
-
-                # Handle Binary/Image fields
+                # Handle binary and image field types
                 elif field_type in ['binary', 'image']:
-                    if field_value is not None:
-                        if isinstance(field_value, bytes):
-                            employee_values[field_name] = base64.b64encode(field_value).decode('utf-8')
-                        else:
-                            employee_values[field_name] = False  # Handle unexpected types
+                    employee_values[field_name] = field_value if field_value else False
+
+                # Handle many2one field types
+                elif field_type == 'many2one':
+                    if field_value:
+                        search_field = field_info.get('search_field', 'display_name')
+                        related_id = self._get_related_id(field_value, field_info['relation'], search_field, models,
+                                                          db, uid, password)
+                        employee_values[field_name] = related_id if related_id else False
                     else:
-                        employee_values[field_name] = False  # No image provided
+                        employee_values[field_name] = False
+
+                # Handle date and datetime field types
+                elif field_type in ['date', 'datetime']:
+                    if field_value:
+                        employee_values[field_name] = field_value  # Assign the value directly
+                    else:
+                        employee_values[field_name] = False  # Set to False if no value
+
+                # Handle one2many field types
+                elif field_type == 'one2many':
+                    if field_value:
+                        # Assuming field_value is a list of dictionary items representing related records
+                        related_records = []
+                        for record in field_value:
+                            related_record_values = self.prepare_related_record_values(record, models, url, db, uid,
+                                                                                       password)
+                            if related_record_values:
+                                related_records.append((0, 0, related_record_values))  # Create command for one2many
+                        employee_values[field_name] = related_records
+                    else:
+                        employee_values[field_name] = []  # Set to empty list if no value
 
         return employee_values
 
-    def _get_related_id(self, field_value, relation, db, uid, password):
+    def prepare_related_record_values(self, record_data, models, url, db, uid, password):
+        """Prepare values for related one2many records."""
+        related_values = {}
+
+        # Assuming the same logic as prepare_employee_values to extract values
+        related_fields = self._get_employee_fields()  # Retrieve related fields metadata
+        for field_name, field_info in related_fields.items():
+            field_type = field_info.get('type')
+
+            if field_name in record_data:
+                field_value = record_data[field_name]
+
+                # Handle field types similar to the main employee data
+                if field_type in ['char', 'text', 'integer', 'float', 'boolean', 'selection']:
+                    related_values[field_name] = field_value if field_value is not None else False
+                elif field_type in ['binary', 'image']:
+                    related_values[field_name] = field_value if field_value else False
+                elif field_type in ['date', 'datetime']:
+                    related_values[field_name] = field_value if field_value else False
+                # Add more field types as necessary...
+
+        return related_values
+
+    def _get_related_id(self, field_value, relation, search_field, models, db, uid, password):
         """Retrieve related ID for Many2one fields."""
-        models = xmlrpc.client.ServerProxy(f'{self._get_rpc_credentials()[0]}/xmlrpc/2/object')
-        related_id = models.execute_kw(db, uid, password, relation, 'search', [[['name', '=', field_value]]])
+        related_id = models.execute_kw(db, uid, password, relation, 'search', [[[search_field, '=', field_value.display_name]]])
         return related_id[0] if related_id else False
 
-    def _get_related_ids(self, field_value, relation, db, uid, password):
-        """Retrieve related IDs for Many2many fields."""
-        models = xmlrpc.client.ServerProxy(f'{self._get_rpc_credentials()[0]}/xmlrpc/2/object')
-        related_ids = models.execute_kw(db, uid, password, relation, 'search', [[['name', 'in', field_value]]])
+    def _get_related_ids(self, field_values, relation, models, db, uid, password):
+        """Retrieve related IDs for Many2many fields based on display names."""
+        related_ids = []
+        if field_values:
+            # Search for related IDs based on display names
+            for display_name in field_values:
+                search_ids = models.execute_kw(db, uid, password, relation, 'search', [[['name', '=', display_name]]])
+                related_ids.extend(search_ids)
+
         return [(6, 0, related_ids)] if related_ids else []
-
-    def _prepare_sub_records(self, field_value, relation, db, uid, password):
-        """Prepare sub-records for One2many fields."""
-        sub_records = []
-        models = xmlrpc.client.ServerProxy(f'{self._get_rpc_credentials()[0]}/xmlrpc/2/object')
-
-        for sub_data in field_value:
-            sub_record_data = {}
-            sub_fields = models.execute_kw(db, uid, password, relation, 'fields_get', [],
-                                           {'attributes': ['type', 'relation']})
-
-            for sub_field_name, sub_field_info in sub_fields.items():
-                if sub_field_name in sub_data:
-                    sub_field_type = sub_field_info['type']
-                    sub_record_data[sub_field_name] = self._get_sub_field_value(sub_data, sub_field_name,
-                                                                                sub_field_type, db, uid, password)
-
-            sub_records.append((0, 0, sub_record_data))  # Prepare sub-record for creation
-        return sub_records
-
-    def _get_sub_field_value(self, sub_data, sub_field_name, sub_field_type, db, uid, password):
-        """Get the value for a sub-field based on its type."""
-        models = xmlrpc.client.ServerProxy(f'{self._get_rpc_credentials()[0]}/xmlrpc/2/object')
-
-        if sub_field_type in ['char', 'integer', 'float', 'boolean', 'selection']:
-            return sub_data.get(sub_field_name, False)
-        elif sub_field_type == 'many2one':
-            related_id = models.execute_kw(db, uid, password, sub_field_info['relation'], 'search',
-                                           [[['name', '=', sub_data[sub_field_name]]]])
-            return related_id[0] if related_id else False
-        elif sub_field_type in ['binary', 'image']:
-            return sub_data.get(sub_field_name, False)  # Return binary data directly
-
-        return False
 
     def _get_employee_fields(self):
         """Retrieve employee fields dynamically, excluding reserved fields."""
         reserved_fields = self._get_reserved_fields()  # Get reserved fields to exclude
         employee_fields = {}
 
-        for field_name in self._fields:
+        for field_name, field_info in self._fields.items():
             if field_name not in reserved_fields:
-                field_info = self._fields[field_name]
                 field_type = field_info.type
 
                 # Check for image fields and handle them appropriately
@@ -178,11 +185,24 @@ class EmployeeRPC(models.Model):
                         'type': field_type,
                         'relation': None  # Image fields don't have a relation
                     }
-                else:
-                    relation = field_info.relation if hasattr(field_info, 'relation') else None
+                elif field_type == 'many2one':
+                    # Retrieve the relation from the Many2one field
+                    relation = field_info.comodel_name
                     employee_fields[field_name] = {
                         'type': field_type,
                         'relation': relation,
+                    }
+                elif field_type == 'many2many':
+                    # Retrieve the relation from the Many2many field
+                    relation = field_info.comodel_name
+                    employee_fields[field_name] = {
+                        'type': field_type,
+                        'relation': relation,
+                    }
+                else:
+                    employee_fields[field_name] = {
+                        'type': field_type,
+                        'relation': None  # Simple fields
                     }
 
         return employee_fields
