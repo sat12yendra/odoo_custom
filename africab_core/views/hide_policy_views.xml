@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hide_policy_form" model="ir.ui.view">
+        <field name="name">hide.policy.form</field>
+        <field name="model">hide.policy</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <notebook>
+                        <page string="Hide Specific Menu">
+                            <tree>
+                                <field name="hide_menu_ids" required="1"
+                                       options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
+                            </tree>
+                        </page>
+                        <page string="Restrict users">
+                            <tree>
+                                <field name="restrict_user_ids" widget="many2many_tags" required="1"
+                                   options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
+                            </tree>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree view for hide policy -->
+    <record id="view_hide_policy_tree" model="ir.ui.view">
+        <field name="name">hide.policy.tree</field>
+        <field name="model">hide.policy</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="hide_menu_ids" widget="many2many_tags" required="1"
+                               options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
+                <field name="restrict_user_ids" widget="many2many_tags" required="1"
+                               options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action for hide policy menu -->
+    <record id="action_hide_policy" model="ir.actions.act_window">
+        <field name="name">Hide Policy</field>
+        <field name="res_model">hide.policy</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu item for page restrictions -->
+    <menuitem id="menu_hide_policy"
+              name="Hide Policy"
+              parent="base.menu_administration"
+              action="action_hide_policy"
+              sequence="11"
+              groups="base.group_system,base.group_user"/>
+</odoo>

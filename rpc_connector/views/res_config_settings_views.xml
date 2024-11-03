@@ -30,22 +30,14 @@
                                     <field name="rpc_password" password="True"/>
                                 </div>
                             </div>
+                            <div class="content-group">
+                                 <button name="action_test_rpc_connection"
+                                         type="object" string="Test Connection" class="oe_highlight"/>
+                            </div>
                         </setting>
                     </block>
                 </xpath>
             </field>
         </record>
-
-        <record id="xmlrpc_config_settings_action" model="ir.actions.act_window">
-            <field name="name">Settings</field>
-            <field name="res_model">res.config.settings</field>
-            <field name="view_mode">form</field>
-            <field name="target">inline</field>
-            <field name="context">{'module' : 'rpc_connector', 'bin_size': False}</field>
-        </record>
-
-        <menuitem id="rpc_connector_config_settings_menu" name="Settings"
-                  parent="hr.menu_human_resources_configuration" sequence="0"
-                  action="xmlrpc_config_settings_action"/>
     </data>
 </odoo>
