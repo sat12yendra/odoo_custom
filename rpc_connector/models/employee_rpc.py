@@ -1,4 +1,5 @@
 import logging
+import ssl
 import xmlrpc.client
 from odoo import models, fields, api
 from odoo.exceptions import UserError, ValidationError
@@ -26,21 +27,23 @@ class EmployeeRPC(models.Model):
         """Fetch employee data based on the selected record's ID and create or update in target DB."""
         for employee in self:
             url, db, username, password = self._get_rpc_credentials()
+
             try:
                 # Extract values for comparison
                 employee_name = employee.name
                 employee_email = employee.work_email
                 if not employee_email:
-                    raise ValidationError("Please add employee work email before process")
+                    raise ValidationError("Please add employee work email before processing.")
 
                 # Establish the connection to the target database
-                common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common')
+                context = ssl._create_unverified_context()
+                common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common', context=context)
                 uid = common.authenticate(db, username, password, {})
 
                 if uid is None:
                     raise UserError("Authentication failed!")
 
-                models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object')
+                models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', context=context)
 
                 # Check if employee with the same name and work_email already exists in target DB
                 existing_employee_ids = models.execute_kw(db, uid, password, 'hr.employee', 'search', [
@@ -76,6 +79,15 @@ class EmployeeRPC(models.Model):
                     }
                 }
 
+            except xmlrpc.client.ProtocolError as protocol_error:
+                _logger.error(f"Protocol error: {str(protocol_error)}")
+                raise UserError(f"Protocol error! Please check the URL. Error: {str(protocol_error)}")
+            except xmlrpc.client.Fault as fault_error:
+                _logger.error(f"XML-RPC Fault: {str(fault_error)}")
+                raise UserError(f"XML-RPC Fault! Error: {str(fault_error)}")
+            except ssl.SSLError as ssl_error:
+                _logger.error(f"SSL Error: {str(ssl_error)}")
+                raise UserError(f"SSL Error! Please check SSL configuration. Error: {str(ssl_error)}")
             except Exception as e:
                 _logger.error(f"Error fetching and creating or updating employee data: {str(e)}")
                 raise UserError(f"Error fetching and creating or updating employee data: {str(e)}")

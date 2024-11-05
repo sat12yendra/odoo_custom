@@ -20,7 +20,7 @@ Long description of module's purpose
     # any module necessary for this one to work correctly
     'depends': ['base', 'hr', 'hrms', 'hide_menu_user', 'hide_page_user',
                 'model_access_rights', 'odoo_readonly_user', 'access_restriction_by_ip',
-                'auto_logout_idle_user_odoo', 'auto_backup', 'ms_query'],
+                'auto_logout_idle_user_odoo', 'ms_query'],
 
     # always loaded
     'data': [
