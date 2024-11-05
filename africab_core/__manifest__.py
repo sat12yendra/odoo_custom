@@ -27,6 +27,7 @@ Long description of module's purpose
         'security/core_security.xml',
         'security/ir.model.access.csv',
         'views/core_menu.xml',
+        'views/hide_policy_views.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
