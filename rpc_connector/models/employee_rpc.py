@@ -1,7 +1,7 @@
 import logging
 import xmlrpc.client
 from odoo import models, fields, api
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -30,6 +30,8 @@ class EmployeeRPC(models.Model):
                 # Extract values for comparison
                 employee_name = employee.name
                 employee_email = employee.work_email
+                if not employee_email:
+                    raise ValidationError("Please add employee work email before process")
 
                 # Establish the connection to the target database
                 common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common')
@@ -99,14 +101,14 @@ class EmployeeRPC(models.Model):
                     employee_values[field_name] = field_value if field_value else False
 
                 # Handle many2one field types
-                elif field_type == 'many2one':
-                    if field_value:
-                        search_field = field_info.get('search_field', 'display_name')
-                        related_id = self._get_related_id(field_value, field_info['relation'], search_field, models,
-                                                          db, uid, password)
-                        employee_values[field_name] = related_id if related_id else False
-                    else:
-                        employee_values[field_name] = False
+                # elif field_type == 'many2one':
+                #     if field_value:
+                #         search_field = field_info.get('search_field', 'display_name')
+                #         related_id = self._get_related_id(field_value, field_info['relation'], search_field, models,
+                #                                           db, uid, password)
+                #         employee_values[field_name] = related_id if related_id else False
+                #     else:
+                #         employee_values[field_name] = False
 
                 # Handle date and datetime field types
                 elif field_type in ['date', 'datetime']:
@@ -116,18 +118,18 @@ class EmployeeRPC(models.Model):
                         employee_values[field_name] = False  # Set to False if no value
 
                 # Handle one2many field types
-                elif field_type == 'one2many':
-                    if field_value:
-                        # Assuming field_value is a list of dictionary items representing related records
-                        related_records = []
-                        for record in field_value:
-                            related_record_values = self.prepare_related_record_values(record, models, url, db, uid,
-                                                                                       password)
-                            if related_record_values:
-                                related_records.append((0, 0, related_record_values))  # Create command for one2many
-                        employee_values[field_name] = related_records
-                    else:
-                        employee_values[field_name] = []  # Set to empty list if no value
+                # elif field_type == 'one2many':
+                #     if field_value:
+                #         # Assuming field_value is a list of dictionary items representing related records
+                #         related_records = []
+                #         for record in field_value:
+                #             related_record_values = self.prepare_related_record_values(record, models, url, db, uid,
+                #                                                                        password)
+                #             if related_record_values:
+                #                 related_records.append((0, 0, related_record_values))  # Create command for one2many
+                #         employee_values[field_name] = related_records
+                #     else:
+                #         employee_values[field_name] = []  # Set to empty list if no value
 
         return employee_values
 
@@ -150,8 +152,6 @@ class EmployeeRPC(models.Model):
                     related_values[field_name] = field_value if field_value else False
                 elif field_type in ['date', 'datetime']:
                     related_values[field_name] = field_value if field_value else False
-                # Add more field types as necessary...
-
         return related_values
 
     def _get_related_id(self, field_value, relation, search_field, models, db, uid, password):
@@ -183,22 +183,22 @@ class EmployeeRPC(models.Model):
                 if field_type in ['binary', 'image']:
                     employee_fields[field_name] = {
                         'type': field_type,
-                        'relation': None  # Image fields don't have a relation
+                        'relation': None
                     }
-                elif field_type == 'many2one':
-                    # Retrieve the relation from the Many2one field
-                    relation = field_info.comodel_name
-                    employee_fields[field_name] = {
-                        'type': field_type,
-                        'relation': relation,
-                    }
-                elif field_type == 'many2many':
-                    # Retrieve the relation from the Many2many field
-                    relation = field_info.comodel_name
-                    employee_fields[field_name] = {
-                        'type': field_type,
-                        'relation': relation,
-                    }
+                # elif field_type == 'many2one':
+                #     # Retrieve the relation from the Many2one field
+                #     relation = field_info.comodel_name
+                #     employee_fields[field_name] = {
+                #         'type': field_type,
+                #         'relation': relation,
+                #     }
+                # elif field_type == 'many2many':
+                #     # Retrieve the relation from the Many2many field
+                #     relation = field_info.comodel_name
+                #     employee_fields[field_name] = {
+                #         'type': field_type,
+                #         'relation': relation,
+                #     }
                 else:
                     employee_fields[field_name] = {
                         'type': field_type,
