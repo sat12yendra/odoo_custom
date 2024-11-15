@@ -38,10 +38,12 @@ class HrEmployee(models.Model):
                 if (today.month, today.day) < (record.birthday.month, record.birthday.day):
                     age -= 1
                 record.age = age
+                record.birth_month = record.birthday.month
             else:
                 record.age = 0
 
     age = fields.Integer("Age", compute="_compute_age", store=True)
+    birth_month = fields.Integer("Birth Month", compute="_compute_age", store=True)
     nssf_no = fields.Char("NSSF No.")
     tin_no = fields.Char("Tin No.")
     whatsapp_no = fields.Char("WhatsApp No.")

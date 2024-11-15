@@ -9,6 +9,7 @@
                 <xpath expr="//field[@name='mobile_phone']" position="before">
                     <field name="birthday"/>
                     <field name="age" />
+                    <field name="birth_month" invisible="1"/>
                     <field name="gender" />
                     <field name="community" />
                 </xpath>
