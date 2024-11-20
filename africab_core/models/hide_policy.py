@@ -15,8 +15,12 @@ class HidePolicy(models.Model):
     restrict_user_ids = fields.Many2many(
         'res.users', string="Restricted Users",
         help='Users restricted from accessing this menu.')
+    page_configuration_ids = fields.Many2many(
+        'page.configuration',
+        string='Page Configurations'
+    )
 
-    @api.constrains('restrict_user_ids', 'hide_menu_ids')
+    @api.constrains('restrict_user_ids', 'hide_menu_ids', 'page_configuration_ids')
     def _check_existing_mappings(self):
         """
         Constraint to check if any user in restrict_user_ids is already mapped
@@ -30,11 +34,24 @@ class HidePolicy(models.Model):
                     ('restrict_user_ids', 'in', user.id)
                 ])
 
+                already_mapped_pages = self.env['page.configuration'].search([
+                    ('id', 'in', record.page_configuration_ids.ids),
+                    ('restrict_user_ids', 'in', user.id)
+                ])
+
                 if already_mapped_menus:
                     # Collect menu names for a more descriptive error message
                     menu_names = ', '.join(already_mapped_menus.mapped('display_name'))
                     raise ValidationError(
                         f"User '{user.name}' is already mapped to the following menu(s): {menu_names}. "
+                        "Please remove these from the selection to avoid duplicate mappings."
+                    )
+
+                if already_mapped_pages:
+                    # Collect page names for a more descriptive error message
+                    page_names = ', '.join(already_mapped_pages.mapped('display_name'))
+                    raise ValidationError(
+                        f"User '{user.name}' is already mapped to the following page(s): {page_names}. "
                         "Please remove these from the selection to avoid duplicate mappings."
                     )
 
@@ -49,6 +66,11 @@ class HidePolicy(models.Model):
                     'restrict_user_ids': [fields.Command.unlink(user.id) for user in record.restrict_user_ids]
                 })
 
+            for page in record.page_configuration_ids:
+                page.write({
+                    'restrict_user_ids': [fields.Command.unlink(user.id) for user in record.restrict_user_ids]
+                })
+
         # Proceed with the standard write operation
         res = super(HidePolicy, self).write(vals)
         # Apply the constraint check before actually updating the record
@@ -58,6 +80,11 @@ class HidePolicy(models.Model):
         for record in self:
             for menu in record.hide_menu_ids:
                 menu.write({
+                    'restrict_user_ids': [fields.Command.link(user.id) for user in record.restrict_user_ids]
+                })
+
+            for page in record.page_configuration_ids:
+                page.write({
                     'restrict_user_ids': [fields.Command.link(user.id) for user in record.restrict_user_ids]
                 })
 
@@ -75,6 +102,11 @@ class HidePolicy(models.Model):
                 'restrict_user_ids': [fields.Command.link(user.id) for user in record.restrict_user_ids]
             })
 
+        for page in record.page_configuration_ids:
+            page.write({
+                'restrict_user_ids': [fields.Command.link(user.id) for user in record.restrict_user_ids]
+            })
+
         return record
 
     def unlink(self):
@@ -84,6 +116,11 @@ class HidePolicy(models.Model):
         for record in self:
             for menu in record.hide_menu_ids:
                 menu.write({
+                    'restrict_user_ids': [fields.Command.unlink(user.id) for user in record.restrict_user_ids]
+                })
+
+            for page in record.page_configuration_ids:
+                page.write({
                     'restrict_user_ids': [fields.Command.unlink(user.id) for user in record.restrict_user_ids]
                 })
 
