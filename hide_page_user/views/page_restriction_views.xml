@@ -27,22 +27,22 @@
     </record>
 
     <!-- Inherit the existing res.users form view -->
-<!--    <record id="view_res_users_form_hide_page_inherit" model="ir.ui.view">-->
-<!--        <field name="name">res.users.form.inherit.hide.page</field>-->
-<!--        <field name="model">res.users</field>-->
-<!--        <field name="inherit_id" ref="base.view_users_form"/>-->
-<!--        <field name="arch" type="xml">-->
-<!--            <xpath expr="//notebook" position="inside">-->
-<!--                <page name="hide_specific_page]" string="Hide Specific Page">-->
-<!--                    <field name="page_configuration_ids" widget='many2many_tags'>-->
-<!--                        <tree editable='bottom'>-->
-<!--                            <field name="name"/>-->
-<!--                        </tree>-->
-<!--                    </field>-->
-<!--                </page>-->
-<!--            </xpath>-->
-<!--        </field>-->
-<!--    </record>-->
+    <record id="view_res_users_form_hide_page_inherit" model="ir.ui.view">
+        <field name="name">res.users.form.inherit.hide.page</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="hide_specific_page]" string="Hide Specific Page">
+                    <field name="page_configuration_ids" widget='many2many_tags'>
+                        <tree editable='bottom'>
+                            <field name="name"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
 
 
     <!-- Action for page restrictions menu -->
