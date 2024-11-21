@@ -16,6 +16,12 @@
                                        options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
                             </tree>
                         </page>
+                        <page string="Hide Specific Page">
+                            <tree>
+                                <field name="page_configuration_ids" required="1"
+                                       options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
+                            </tree>
+                        </page>
                         <page string="Restrict users">
                             <tree>
                                 <field name="restrict_user_ids" widget="many2many_tags" required="1"
@@ -36,6 +42,8 @@
             <tree>
                 <field name="name"/>
                 <field name="hide_menu_ids" widget="many2many_tags" required="1"
+                               options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
+                <field name="page_configuration_ids" widget="many2many_tags" required="1"
                                options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
                 <field name="restrict_user_ids" widget="many2many_tags" required="1"
                                options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>

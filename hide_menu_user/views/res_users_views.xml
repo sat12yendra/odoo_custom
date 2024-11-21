@@ -6,13 +6,13 @@
         <field name="model">res.users</field>
         <field name="inherit_id" ref="base.view_users_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//notebook" position="inside">
-                <page string="Hide Specific Menu" invisible="is_admin">
-                    <tree>
-                        <field name="hide_menu_ids"/>
-                    </tree>
-                </page>
-            </xpath>
+<!--            <xpath expr="//notebook" position="inside">-->
+<!--                <page string="Hide Specific Menu" invisible="is_admin">-->
+<!--                    <tree>-->
+<!--                        <field name="hide_menu_ids"/>-->
+<!--                    </tree>-->
+<!--                </page>-->
+<!--            </xpath>-->
             <field name="name" position="after">
                 <field name="is_admin" invisible="1"/>
             </field>

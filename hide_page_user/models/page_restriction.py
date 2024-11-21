@@ -6,6 +6,9 @@ class PageConfiguration(models.Model):
     _description = 'Page Configuration'
 
     name = fields.Char(string='Name', required=True)
+    restrict_user_ids = fields.Many2many(
+        'res.users', string="Restricted Users",
+        help='Users restricted from accessing this pages.')
 
 
 class ResUsers(models.Model):
