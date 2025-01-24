@@ -126,7 +126,7 @@
                                                 <field name="hod_remarks" readonly="is_super_admin"
                                                        groups="hrms.group_hr_hod,base.group_system"/>
                                                 <field name="management_remarks" groups="base.group_system"/>
-                                                <field name="task_upload_file_ids" widget="many2many_binary"/>
+                                                <field name="task_upload_file_ids" widget="many2many_binary_preview"/>
                                                 <field name="is_hod" invisible="1"/>
                                                 <field name="is_super_admin" invisible="1"/>
                                             </group>
@@ -147,7 +147,7 @@
                                                         <field name="hod_remarks" readonly="is_super_admin"
                                                                groups="hrms.group_hr_hod,base.group_system"/>
                                                         <field name="management_remarks" groups="base.group_system"/>
-                                                        <field name="sub_task_upload_file_ids" widget="many2many_binary"/>
+                                                        <field name="sub_task_upload_file_ids" widget="many2many_binary_preview"/>
                                                         <field name="is_hod" column_invisible="1"/>
                                                         <field name="is_super_admin" column_invisible="1"/>
                                                     </tree>

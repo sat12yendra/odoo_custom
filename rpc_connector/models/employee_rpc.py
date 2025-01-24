@@ -24,16 +24,16 @@ class EmployeeRPC(models.Model):
         return url, db, username, password
 
     def button_get_employee_data(self):
-        """Fetch employee data based on the selected record's ID and create or update in target DB."""
+        print("Executing Sync Employee Data Action...") # Fetch all employees or filter as needed
         for employee in self:
             url, db, username, password = self._get_rpc_credentials()
 
             try:
                 # Extract values for comparison
                 employee_name = employee.name
-                employee_email = employee.work_email
-                if not employee_email:
-                    raise ValidationError("Please add employee work email before processing.")
+                # employee_email = employee.work_email
+                # if not employee_email:
+                #     raise ValidationError("Please add employee work email before processing.")
 
                 # Establish the connection to the target database
                 context = ssl._create_unverified_context()
@@ -46,26 +46,26 @@ class EmployeeRPC(models.Model):
                 models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', context=context)
 
                 # Check if employee with the same name and work_email already exists in target DB
-                existing_employee_ids = models.execute_kw(db, uid, password, 'hr.employee', 'search', [
-                    [('work_email', '=', employee_email)]
-                ])
+                # existing_employee_ids = models.execute_kw(db, uid, password, 'hr.employee', 'search', [
+                #     [('work_email', '=', employee_email)]
+                # ])
 
                 # Prepare employee data
                 employee_data = self.prepare_employee_values(employee, models, url, db, uid, password)
 
-                if existing_employee_ids:
-                    # If employee exists, update the existing record
-                    employee_id_to_update = existing_employee_ids[0]
-                    models.execute_kw(db, uid, password, 'hr.employee', 'write', [
-                        [employee_id_to_update], employee_data
-                    ])
-                    _logger.info(f"Employee with ID {employee_id_to_update} updated in target DB.")
-                    message = f"Employee '{employee_name}' successfully updated in the target database with ID {employee_id_to_update}."
-                else:
-                    # If employee does not exist, create a new record
-                    created_employee_id = models.execute_kw(db, uid, password, 'hr.employee', 'create', [employee_data])
-                    _logger.info(f"Employee created in target DB with ID: {created_employee_id}")
-                    message = f"Employee '{employee_name}' successfully created in the target database with ID {created_employee_id}."
+                # if existing_employee_ids:
+                #     # If employee exists, update the existing record
+                #     employee_id_to_update = existing_employee_ids[0]
+                #     models.execute_kw(db, uid, password, 'hr.employee', 'write', [
+                #         [employee_id_to_update], employee_data
+                #     ])
+                #     _logger.info(f"Employee with ID {employee_id_to_update} updated in target DB.")
+                #     message = f"Employee '{employee_name}' successfully updated in the target database with ID {employee_id_to_update}."
+                # else:
+                # If employee does not exist, create a new record
+                created_employee_id = models.execute_kw(db, uid, password, 'hr.employee', 'create', [employee_data])
+                _logger.info(f"Employee created in target DB with ID: {created_employee_id}")
+                message = f"Employee '{employee_name}' successfully created in the target database with ID {created_employee_id}."
 
                 # Success message
                 return {
