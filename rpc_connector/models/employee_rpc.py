@@ -24,7 +24,7 @@ class EmployeeRPC(models.Model):
         return url, db, username, password
 
     def button_get_employee_data(self):
-        """Fetch employee data based on the selected record's ID and create or update in target DB."""
+        print("Executing Sync Employee Data Action...") # Fetch all employees or filter as needed
         for employee in self:
             url, db, username, password = self._get_rpc_credentials()
 

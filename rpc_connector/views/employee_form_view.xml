@@ -9,4 +9,17 @@
             </xpath>
         </field>
     </record>
+
+    <!-- Define the Server Action -->
+    <record id="action_sync_employee_data" model="ir.actions.server">
+        <field name="name">Sync Employee Data</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="binding_model_id" ref="hr.model_hr_employee"/> <!-- Bind the action to hr.employee -->
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+            if records:
+                action = records.button_get_employee_data()
+        </field>
+    </record>
 </odoo>
