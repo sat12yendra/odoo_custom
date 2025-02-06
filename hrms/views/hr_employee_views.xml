@@ -262,5 +262,25 @@
                 </xpath>
             </field>
         </record>
+
+        <record id="action_employee_mass_update_server" model="ir.actions.server">
+            <field name="name">Mass Update Employees</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="binding_model_id" ref="hr.model_hr_employee"/>
+            <field name="binding_view_types">list</field>
+            <field name="groups_id"
+                   eval="[(4, ref('hrms.group_hr_user_manager')), (4, ref('hrms.group_hr_admin_1')), (4, ref('hrms.group_hr_admin_2')), (4, ref('hrms.group_hr_executive')), (4, ref('hrms.hr_employee_super_admin_see_all_rule')), (4, ref('hr.group_hr_manager'))]"/>
+            <field name="state">code</field>
+            <field name="code">
+                action = {
+                    'type': 'ir.actions.act_window',
+                    'name': 'Mass Update Employees',
+                    'res_model': 'employee.mass.update.wizard',
+                    'view_mode': 'form',
+                    'target': 'new',
+                    'context': {'active_ids': env.context.get('active_ids', [])}
+                }
+            </field>
+        </record>
     </data>
 </odoo>
