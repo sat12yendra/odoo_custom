@@ -112,6 +112,12 @@ class HrEmployee(models.Model):
     total_other_allowance = fields.Monetary(string='Total Other Allowance', compute='_compute_total_allowances', store=True)
     total_ctc = fields.Monetary(string='Total CTC', compute='_compute_total_ctc', store=True)
 
+    total_in_hand_allowance_b = fields.Monetary(string='Total In Hand Allowance', compute='_compute_total_allowances_for_salary_b',
+                                              store=True)
+    total_other_allowance_b = fields.Monetary(string='Total Other Allowance', compute='_compute_total_allowances_for_salary_b',
+                                            store=True)
+    total_ctc_b = fields.Monetary(string='Total CTC', compute='_compute_total_ctc_for_salary_b', store=True)
+
     bank_details_line_ids = fields.One2many('res.partner.bank', 'employee_id',
                                             string="Bank Details Lines")
     education_detail_line_ids = fields.One2many('hr.education.details', 'employee_id',
@@ -120,6 +126,8 @@ class HrEmployee(models.Model):
                                                    string="Compensation Details Lines")
     salary_detail_line_ids = fields.One2many('hr.salary.details', 'employee_id',
                                              string="Salary Details Lines")
+    salary_detail_line_b_ids = fields.One2many('hr.salary.details_b', 'employee_id',
+                                             string="Salary-B Details Lines")
     employee_lang_ids = fields.Many2many('res.lang', string="Language Known")
     date_of_joining = fields.Date("Date of Joining")
 
@@ -248,10 +256,28 @@ class HrEmployee(models.Model):
             record.total_in_hand_allowance = total_in_hand
             record.total_other_allowance = total_other
 
+    @api.depends('salary_detail_line_b_ids.amount', 'salary_detail_line_b_ids.salary_type')
+    def _compute_total_allowances_for_salary_b(self):
+        for record in self:
+            total_in_hand = 0.0
+            total_other = 0.0
+            for line in record.salary_detail_line_b_ids:
+                if line.salary_type == 'in_hand':
+                    total_in_hand += line.amount
+                elif line.salary_type == 'others':
+                    total_other += line.amount
+            record.total_in_hand_allowance_b = total_in_hand
+            record.total_other_allowance_b = total_other
+
     @api.depends('total_in_hand_allowance', 'total_other_allowance')
     def _compute_total_ctc(self):
         for record in self:
             record.total_ctc = record.total_in_hand_allowance + record.total_other_allowance
+
+    @api.depends('total_in_hand_allowance_b', 'total_other_allowance_b')
+    def _compute_total_ctc_for_salary_b(self):
+        for record in self:
+            record.total_ctc_b = record.total_in_hand_allowance_b + record.total_other_allowance_b
 
     @api.model
     def default_get(self, fields):
@@ -271,6 +297,7 @@ class HrEmployee(models.Model):
             }))
 
         res['salary_detail_line_ids'] = salary_details
+        res['salary_detail_line_b_ids'] = salary_details
         return res
 
     def write(self, vals):
@@ -293,6 +320,7 @@ class HrEmployee(models.Model):
 
                 if salary_details:
                     employee.write({'salary_detail_line_ids': salary_details})
+                    employee.write({'salary_detail_line_b_ids': salary_details})
 
         return result
 
@@ -328,6 +356,42 @@ class HrEmployee(models.Model):
             'params': {
                 'title': 'Success',
                 'message': 'Salary details populated for this employees with blank salary details.',
+                'sticky': False,
+            },
+        }
+
+    def action_populate_salary_details_b(self):
+        for employee in self:
+            # Get existing salary component IDs
+            existing_components = employee.salary_detail_line_b_ids.mapped('component_id.id')
+
+            # Get all salary master records
+            salary_master_records = self.env['salary.master'].search([])
+
+            # Create new salary details for missing components
+            salary_details = [
+                (0, 0, {
+                    'employee_id': employee.id,
+                    'component_id': record.id,
+                    'salary_type': record.salary_type,
+                    'amount': 0.0,
+                    'currency_id': employee.currency_id.id,
+                    'remarks': '',
+                })
+                for record in salary_master_records
+                if record.id not in existing_components
+            ]
+
+            # Write new salary details if there are any
+            if salary_details:
+                employee.write({'salary_detail_line_b_ids': [(0, 0, detail[2]) for detail in salary_details]})
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Success',
+                'message': 'Salary-B details populated for this employees with blank salary details.',
                 'sticky': False,
             },
         }
@@ -483,7 +547,20 @@ class CompensationDetails(models.Model):
 
 class HrSalaryDetails(models.Model):
     _name = 'hr.salary.details'
-    _description = "Employee salary compensation details"
+    _description = "Employee salary compensation details A"
+
+    employee_id = fields.Many2one('hr.employee', string="Employee")
+    component_id = fields.Many2one('salary.master', string="Component")
+    salary_type = fields.Selection([('in_hand', 'In-hand'), ('others', 'Others')],
+                                   string="Salary Type")
+    amount = fields.Float(string="Amount")
+    currency_id = fields.Many2one('res.currency', string="Currency")
+    remarks = fields.Text("Remarks")
+
+
+class HrSalaryDetailsB(models.Model):
+    _name = 'hr.salary.details_b'
+    _description = "Employee salary compensation details B"
 
     employee_id = fields.Many2one('hr.employee', string="Employee")
     component_id = fields.Many2one('salary.master', string="Component")

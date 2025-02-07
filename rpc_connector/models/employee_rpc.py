@@ -23,74 +23,193 @@ class EmployeeRPC(models.Model):
 
         return url, db, username, password
 
-    def button_get_employee_data(self):
-        print("Executing Sync Employee Data Action...") # Fetch all employees or filter as needed
-        for employee in self:
-            url, db, username, password = self._get_rpc_credentials()
+    # def button_get_employee_data(self):
+    #     """Create multiple employees in the target database based on selected records."""
+    #     _logger.info("Executing Sync Employee Data Action...")
+    #
+    #     if not self:
+    #         raise UserError("No employees selected. Please select at least one employee.")
+    #
+    #     url, db, username, password = self._get_rpc_credentials()
+    #
+    #     try:
+    #         context = ssl._create_unverified_context()
+    #         common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common', context=context)
+    #         uid = common.authenticate(db, username, password, {})
+    #
+    #         if uid is None:
+    #             raise UserError("Authentication failed!")
+    #
+    #         models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', context=context)
+    #         created_employees = []
+    #
+    #         for employee in self:
+    #             employee_name = employee.name
+    #             employee_data = self.prepare_employee_values(employee, models, url, db, uid, password)
+    #
+    #             # Create the employee in the target database
+    #             created_employee_id = models.execute_kw(db, uid, password, 'hr.employee', 'create', [employee_data])
+    #             _logger.info(f"Employee '{employee_name}' created in target DB with ID: {created_employee_id}")
+    #             created_employees.append((employee_name, created_employee_id))
+    #
+    #         # Success message
+    #         message = "\n".join([f"Employee '{name}' successfully created with ID {emp_id}" for name, emp_id in created_employees])
+    #         return {
+    #             'type': 'ir.actions.client',
+    #             'tag': 'display_notification',
+    #             'params': {
+    #                 'title': 'Success',
+    #                 'message': message,
+    #                 'type': 'success',
+    #                 'sticky': False,
+    #             }
+    #         }
+    #
+    #     except xmlrpc.client.ProtocolError as protocol_error:
+    #         _logger.error(f"Protocol error: {str(protocol_error)}")
+    #         raise UserError(f"Protocol error! Please check the URL. Error: {str(protocol_error)}")
+    #     except xmlrpc.client.Fault as fault_error:
+    #         _logger.error(f"XML-RPC Fault: {str(fault_error)}")
+    #         raise UserError(f"XML-RPC Fault! Error: {str(fault_error)}")
+    #     except ssl.SSLError as ssl_error:
+    #         _logger.error(f"SSL Error: {str(ssl_error)}")
+    #         raise UserError(f"SSL Error! Please check SSL configuration. Error: {str(ssl_error)}")
+    #     except Exception as e:
+    #         _logger.error(f"Error fetching and creating employees: {str(e)}")
+    #         raise UserError(f"Error fetching and creating employees: {str(e)}")
 
-            try:
+    def button_get_employee_data(self):
+        print("Executing Sync Employee Data Action...")  # Fetch all employees or filter as needed
+
+        url, db, username, password = self._get_rpc_credentials()
+
+        try:
+
+
+            # Establish the connection to the target database
+            context = ssl._create_unverified_context()
+            common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common', context=context)
+            uid = common.authenticate(db, username, password, {})
+
+            if uid is None:
+                raise UserError("Authentication failed!")
+
+            models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', context=context)
+            for employee in self:
+                _logger.error(f"Count for employee update:{employee.name}")
                 # Extract values for comparison
                 employee_name = employee.name
-                # employee_email = employee.work_email
-                # if not employee_email:
-                #     raise ValidationError("Please add employee work email before processing.")
+                department_name = employee.department_id.name
+                job_name = employee.job_id.name
+                manager_name = employee.parent_id.name
+                coach_name = employee.coach_id.name
 
-                # Establish the connection to the target database
-                context = ssl._create_unverified_context()
-                common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common', context=context)
-                uid = common.authenticate(db, username, password, {})
+                # Check if employee with the same name already exists in the target DB
+                existing_employee_ids = models.execute_kw(db, uid, password, 'hr.employee', 'search', [
+                    [('name', '=', employee_name)]
+                ])
+                department_id = models.execute_kw(db, uid, password, 'hr.department', 'search', [
+                    [('name', '=', department_name)]])
+                job_id = models.execute_kw(db, uid, password, 'hr.job', 'search', [
+                    [('name', '=', job_name)]])
+                parent_id = models.execute_kw(db, uid, password, 'hr.employee', 'search', [
+                    [('name', '=', manager_name)]])
+                coach_id = models.execute_kw(db, uid, password, 'hr.employee', 'search', [
+                    [('name', '=', coach_name)]])
 
-                if uid is None:
-                    raise UserError("Authentication failed!")
 
-                models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', context=context)
-
-                # Check if employee with the same name and work_email already exists in target DB
-                # existing_employee_ids = models.execute_kw(db, uid, password, 'hr.employee', 'search', [
-                #     [('work_email', '=', employee_email)]
-                # ])
-
-                # Prepare employee data
-                employee_data = self.prepare_employee_values(employee, models, url, db, uid, password)
-
-                # if existing_employee_ids:
-                #     # If employee exists, update the existing record
-                #     employee_id_to_update = existing_employee_ids[0]
-                #     models.execute_kw(db, uid, password, 'hr.employee', 'write', [
-                #         [employee_id_to_update], employee_data
-                #     ])
-                #     _logger.info(f"Employee with ID {employee_id_to_update} updated in target DB.")
-                #     message = f"Employee '{employee_name}' successfully updated in the target database with ID {employee_id_to_update}."
-                # else:
-                # If employee does not exist, create a new record
-                created_employee_id = models.execute_kw(db, uid, password, 'hr.employee', 'create', [employee_data])
-                _logger.info(f"Employee created in target DB with ID: {created_employee_id}")
-                message = f"Employee '{employee_name}' successfully created in the target database with ID {created_employee_id}."
-
-                # Success message
-                return {
-                    'type': 'ir.actions.client',
-                    'tag': 'display_notification',
-                    'params': {
-                        'title': 'Success',
-                        'message': message,
-                        'type': 'success',
-                        'sticky': False,
-                    }
+                # Manually set the employee data
+                employee_data = {
+                    'department_id': department_id[0] if department_id else False,
+                    'job_id': job_id[0] if job_id else False,
+                    'parent_id': parent_id[0] if parent_id else False,
+                    'coach_id': coach_id[0] if coach_id else False,
+                    'job_title': employee.job_title
                 }
 
-            except xmlrpc.client.ProtocolError as protocol_error:
-                _logger.error(f"Protocol error: {str(protocol_error)}")
-                raise UserError(f"Protocol error! Please check the URL. Error: {str(protocol_error)}")
-            except xmlrpc.client.Fault as fault_error:
-                _logger.error(f"XML-RPC Fault: {str(fault_error)}")
-                raise UserError(f"XML-RPC Fault! Error: {str(fault_error)}")
-            except ssl.SSLError as ssl_error:
-                _logger.error(f"SSL Error: {str(ssl_error)}")
-                raise UserError(f"SSL Error! Please check SSL configuration. Error: {str(ssl_error)}")
-            except Exception as e:
-                _logger.error(f"Error fetching and creating or updating employee data: {str(e)}")
-                raise UserError(f"Error fetching and creating or updating employee data: {str(e)}")
+                if existing_employee_ids:
+                    # Update the existing record
+                    employee_id_to_update = existing_employee_ids[0]
+
+                    resume_line = models.execute_kw(db, uid, password, 'hr.resume.line', 'search', [
+                        [('employee_id', '=', employee_id_to_update)]  # Search condition
+                        ])
+                    resume_id = None
+                    if resume_line:
+                        resume_id = resume_line[0]
+                    resume_line_id = self.env['hr.resume.line'].sudo().search(
+                        [('employee_id', '=', employee.id)], limit=1)
+                    date_start = None
+                    if resume_line_id:
+                        date_start = resume_line_id[0].date_start
+                    _logger.info(f"Date start**********{resume_id}- {resume_line_id}-{date_start}")
+                    # Update resume details
+                    if resume_id:
+                        models.execute_kw(db, uid, password, 'hr.resume.line', 'write', [
+                            [resume_id], {'date_start': date_start}
+                        ])
+
+
+                    # Update bank details
+                    bank_line_ids = self.env['res.partner.bank'].sudo().search(
+                        [('employee_id', '=', employee.id)])
+                    if bank_line_ids:
+                        for bank in bank_line_ids:
+                            account_no = bank.acc_number
+                            account_holder_name = bank.partner_id.name
+                            account_holder_id = models.execute_kw(db, uid, password, 'res.partner', 'search', [
+                                [('name', '=', account_holder_name)]])
+                            new_account_holder_id = None
+                            if not account_holder_id:
+                                new_account_holder_id = models.execute_kw(db, uid, password, 'res.partner', 'create',
+                                                  [{'name': account_holder_name}])
+                            bank_details_id = models.execute_kw(db, uid, password, 'res.partner.bank', 'search', [
+                                [('acc_number', '=', account_no)]])
+                            if not bank_details_id:
+                                models.execute_kw(db, uid, password, 'res.partner.bank', 'create',
+                                                  [{'employee_id': employee_id_to_update,
+                                                    'acc_number': account_no,
+                                                    'partner_id': account_holder_id[0] if account_holder_id else new_account_holder_id}])
+
+
+                    # Update HR Salary Details
+                    component_id = self.env['salary.master'].sudo().search(
+                        [('name', '=', "Basic Salary")])
+                    salary_details_id = self.env['hr.salary.details'].sudo().search(
+                        [('employee_id', '=', employee.id),('component_id','=', component_id.id)], limit=1)
+                    currency = 135
+                    amount = 0.0
+                    if salary_details_id:
+                        amount = salary_details_id.amount
+                    salary_line = models.execute_kw(db, uid, password, 'hr.salary.details', 'search', [
+                        [('employee_id', '=', employee_id_to_update),('component_id', '=', 1)]  # Search condition
+                    ])
+                    if salary_line:
+                        salary_id = salary_line[0]
+                        _logger.info(f"Salary Details********** {salary_id}-{amount}")
+                        models.execute_kw(db, uid, password, 'hr.salary.details', 'write', [
+                            [salary_id], {'amount': amount, 'currency_id': currency}
+                        ])
+
+                    # Update Employee records
+                    models.execute_kw(db, uid, password, 'hr.employee', 'write', [
+                        [employee_id_to_update], employee_data
+                    ])
+
+                    _logger.info(f"Employee with ID {employee_id_to_update} updated in target DB.")
+
+        except xmlrpc.client.ProtocolError as protocol_error:
+            _logger.error(f"Protocol error: {str(protocol_error)}")
+            raise UserError(f"Protocol error! Please check the URL. Error: {str(protocol_error)}")
+        except xmlrpc.client.Fault as fault_error:
+            _logger.error(f"XML-RPC Fault: {str(fault_error)}")
+            raise UserError(f"XML-RPC Fault! Error: {str(fault_error)}")
+        except ssl.SSLError as ssl_error:
+            _logger.error(f"SSL Error: {str(ssl_error)}")
+            raise UserError(f"SSL Error! Please check SSL configuration. Error: {str(ssl_error)}")
+        except Exception as e:
+            _logger.error(f"Error fetching and updating employee data: {str(e)}")
+            raise UserError(f"Error fetching and updating employee data: {str(e)}")
 
     def prepare_employee_values(self, employee_data, models, url, db, uid, password):
         """Prepare employee values based on field types for XML-RPC."""

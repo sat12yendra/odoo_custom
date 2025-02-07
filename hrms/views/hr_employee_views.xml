@@ -195,9 +195,9 @@
                             </group>
                         </group>
                     </page>
-                    <page name="salary_detail" string="Salary Details">
+                    <page name="salary_detail_a" string="Salary-A">
                         <button name="action_populate_salary_details" type="object"
-                                string="Populate Salary Details" class="oe_highlight" />
+                                string="Populate Salary-A Details" class="oe_highlight" />
                         <field name="salary_detail_line_ids" string="">
                             <tree editable="bottom">
                                 <field name="component_id" options='{"no_open": True, "no_create": True}'/>
@@ -215,6 +215,29 @@
                             <div class="clearfix"/>
                             <group class="oe_subtotal_footer" colspan="2" name="salary_total">
                                 <field name="total_ctc" colspan="2" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                        </group>
+                    </page>
+                    <page name="salary_detail_b" string="Salary-B">
+                        <button name="action_populate_salary_details_b" type="object"
+                                string="Populate Salary-B Details" class="oe_highlight" />
+                        <field name="salary_detail_line_b_ids" string="">
+                            <tree editable="bottom">
+                                <field name="component_id" options='{"no_open": True, "no_create": True}'/>
+                                <field name="salary_type"/>
+                                <field name="amount"/>
+                                <field name="currency_id" options='{"no_open": True, "no_create": True}'/>
+                                <field name="remarks" />
+                            </tree>
+                        </field>
+                        <group name="note_group" col="6" class="mt-2 mt-md-0">
+                            <group class="oe_subtotal_footer" colspan="2" name="salary_total">
+                                <field name="total_in_hand_allowance_b" colspan="2" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <field name="total_other_allowance_b" colspan="2" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                            <div class="clearfix"/>
+                            <group class="oe_subtotal_footer" colspan="2" name="salary_total">
+                                <field name="total_ctc_b" colspan="2" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                             </group>
                         </group>
                     </page>
