@@ -3,7 +3,7 @@
         <field name="name">employee.mass.update.wizard.form</field>
         <field name="model">employee.mass.update.wizard</field>
         <field name="arch" type="xml">
-            <form string="Mass Update Employees">
+            <form string="Bulk Update Employees">
                 <group>
                     <group>
                         <field name="company_id"/>

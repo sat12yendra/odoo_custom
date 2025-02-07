@@ -2,7 +2,7 @@ from odoo import models, fields, api
 
 class EmployeeMassUpdateWizard(models.TransientModel):
     _name = "employee.mass.update.wizard"
-    _description = "Mass Update Employee Wizard"
+    _description = "Bulk Update Employee Wizard"
 
     company_id = fields.Many2one('res.company', string="Company", default=lambda self: self.env.company)
     department_id = fields.Many2one('hr.department', string="Department", domain="[('company_id', '=', company_id)]")
