@@ -30,3 +30,15 @@ class ResUsers(models.Model):
                 **self.env['hr.employee']._sync_user(self)
             ))
             _logger.info(f"Created new employee {new_employee.name} for user {self.login}.")
+
+    @api.model
+    def create(self, vals):
+        # vals['active'] = False
+
+        # If policy is not updated, show a warning
+        # if not self.policy_updated:
+        #     raise UserError(_("You cannot create a user without updating the policy!"))
+
+        vals['groups_id'] = [(5, 0, 0)]
+
+        return super(ResUsers, self).create(vals)
